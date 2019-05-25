@@ -1,13 +1,40 @@
+import Configuration.width as w
+import Configuration.height as h
+
+import Position.*
+import State.ACTIVE
+
 /**
  * Represents the cell of game field.
  */
 class Node (var x:Int, var y:Int) {
 
+    var pos:Position = R1
+
+    var state:State = ACTIVE
+
     /**
      * Rotate node clockwise.
      */
     fun rotate() {
+        when (pos) {
+            R1 -> {
 
+                pos = R2
+            }
+            R2 -> {
+
+                pos = R3
+            }
+            R3 -> {
+
+                pos = R4
+            }
+            R4 -> {
+
+                pos = R1
+            }
+        }
     }
 
     /**
@@ -15,7 +42,7 @@ class Node (var x:Int, var y:Int) {
      */
     fun left() {
         if (x > 0) {
-            x--
+            x --
         }
     }
 
@@ -23,7 +50,7 @@ class Node (var x:Int, var y:Int) {
      * Move node to right.
      */
     fun right() {
-        if (x < 50) {
+        if (x < w) {
             x++
         }
     }
@@ -32,7 +59,7 @@ class Node (var x:Int, var y:Int) {
      * Move node to down.
      */
     fun down() {
-        if (y > 50) {
+        if (y > h) {
             y--
         }
     }
