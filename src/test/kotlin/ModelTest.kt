@@ -1,8 +1,9 @@
+import model.Model
 import org.junit.Assert
 import org.junit.Test
 
-import Configuration.height as h
-import Configuration.width as w
+import config.Configuration.height as h
+import config.Configuration.width as w
 
 class ModelTest {
 

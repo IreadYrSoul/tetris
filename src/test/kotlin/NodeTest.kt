@@ -1,9 +1,10 @@
+import model.Node
 import org.junit.Assert
 import org.junit.Test
 
-import Configuration.width as w
-import Configuration.height as h
-import Position.*
+import config.Configuration.width as w
+import config.Configuration.height as h
+import model.Position.*
 
 import org.junit.Before
 
@@ -12,7 +13,7 @@ import org.junit.Before
  */
 class NodeTest {
 
-    lateinit var node:Node
+    lateinit var node: Node
 
     @Before
     fun setIp() {
@@ -21,7 +22,7 @@ class NodeTest {
 
     @Test
     fun testNodeRotate() {
-        //TODO: full method Node.rotate() is not implemented yet.
+        //TODO: full method model.Node.rotate() is not implemented yet.
         node.rotate()
         Assert.assertEquals(node.pos, R2)
         node.rotate()

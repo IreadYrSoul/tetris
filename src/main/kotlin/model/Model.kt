@@ -1,5 +1,7 @@
-import Configuration.width as w
-import Configuration.height as h
+package model
+
+import config.Configuration.width as w
+import config.Configuration.height as h
 
 /**
  * Represents model of game field.

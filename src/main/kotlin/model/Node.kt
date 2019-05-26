@@ -1,17 +1,19 @@
-import Configuration.width as w
-import Configuration.height as h
+package model
 
-import Position.*
-import State.ACTIVE
+import config.Configuration.width as w
+import config.Configuration.height as h
+
+import model.Position.*
+import model.State.ACTIVE
 
 /**
  * Represents the cell of game field.
  */
 class Node (var x:Int, var y:Int) {
 
-    var pos:Position = R1
+    var pos: Position = R1
 
-    var state:State = ACTIVE
+    var state: State = ACTIVE
 
     /**
      * Rotate node clockwise.

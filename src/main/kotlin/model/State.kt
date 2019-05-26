@@ -1,4 +1,4 @@
-
+package model
 
 /**
  * Represent the status on node.
@@ -6,7 +6,7 @@
 enum class State {
 
     /**
-     * Active node (in Shape)
+     * Active node (in model.Shape)
      */
     ACTIVE,
 
