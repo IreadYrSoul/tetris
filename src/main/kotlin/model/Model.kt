@@ -6,7 +6,9 @@ import config.Configuration.height as h
 /**
  * Represents model of game field.
  */
-class Model {
-    var array:Array<IntArray> = Array(w){ IntArray(h) }
+class Model (w:Int, h:Int) {
+
+    val array:Array<Array<Node?>> = Array(h) { Array<Node?>(w){ null} }
+
 }
 

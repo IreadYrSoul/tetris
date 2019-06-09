@@ -1,4 +1,6 @@
 package model
+
+
 /**
  * Represents rotation position around axis.
  */

@@ -1,4 +1,6 @@
 package config
+
+
 /**
  * Contains configuration app properties.
  */
@@ -8,6 +10,11 @@ object Configuration {
      * the application name.
      */
     const val title = "Tetris"
+
+    /**
+     * the application logo.
+     */
+    const val logo = "/icon/logo.png"
 
     /**
      *  the Display height.

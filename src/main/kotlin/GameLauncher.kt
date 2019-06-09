@@ -7,5 +7,5 @@ import javax.swing.UIManager
  */
 fun main(args: Array<String>) {
     UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName())
-    EventQueue.invokeLater(Game())
+    EventQueue.invokeLater {Game().start()}
 }

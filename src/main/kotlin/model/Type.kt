@@ -1,5 +1,6 @@
 package model
 
+
 /**
  * Represents the type of tetris shape.
  */

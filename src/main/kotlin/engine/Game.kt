@@ -1,7 +1,13 @@
 package engine
 
-import graphics.Display
+import render.Display
 import util.FrameRate
+import java.awt.Color
+import java.awt.Graphics
+import java.awt.image.BufferStrategy
+
+import config.Configuration.displeyWidth as width
+import config.Configuration.displayHeight as height
 
 
 /**
@@ -10,18 +16,18 @@ import util.FrameRate
 class Game : Runnable {
 
     val frameRate = FrameRate()
-
     val appSleep = 10L
-
+    @Volatile
     var running = false
+
+    lateinit var display:Display
+    lateinit var bs:BufferStrategy
 
     lateinit var gameThread: Thread
 
-    lateinit var display: Display
-
     fun createAndShowGui() {
         display = Display()
-        gameThread = Thread(this)
+        bs = display.bs
     }
 
 
@@ -29,9 +35,7 @@ class Game : Runnable {
      * the core loop of game.
      */
     private fun gameLoop(delta: Float) {
-        input()
-        update()
-        render()
+        renderFrame()
         sleep(appSleep)
     }
 
@@ -47,13 +51,35 @@ class Game : Runnable {
 
     }
 
-    private fun render() {
+    private fun renderFrame() {
+        do {
+            do {
+                var g:Graphics? = null
+                try {
+                    g = bs.drawGraphics
+                    render(g)
+                } finally {
+                    if (g != null) {
+                        g.dispose()
+                    }
+                }
+            } while (bs.contentsRestored())
+            bs.show()
+        } while (bs.contentsLost())
+
+    }
+
+    private fun render(g:Graphics) {
+        g.clearRect(0,0, width, height)
+        g.color = Color.GREEN
         frameRate.calculate()
+        g.drawString(frameRate.frameRate, 4, 15)
     }
 
     override fun run() {
+        createAndShowGui()
+
         running = true
-        initialize()
         var currTime = System.nanoTime()
         var lastTime = currTime
         var nsPerFrame: Long
@@ -73,11 +99,13 @@ class Game : Runnable {
         }
     }
 
-    private fun initialize() {
-
-    }
-
     fun start() {
-
+        if (running) {
+            return
+        }
+        running = true
+        gameThread = Thread(this)
+        gameThread.start()
     }
+
 }

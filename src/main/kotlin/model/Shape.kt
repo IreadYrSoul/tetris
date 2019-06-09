@@ -3,7 +3,7 @@ package model
 import model.Type.*
 
 /**
- * Represents tetris shape.
+ * Represents Tetris shape.
  */
 class Shape {
 
