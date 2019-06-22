@@ -12,7 +12,7 @@ import java.util.*
 /**
  * Represents Tetris shape.
  */
-class Shape(var type: Type) {
+class Shape(val type: Type, val color: Color) {
 
     val nodes:Array<Node>
     val timer:Timer
@@ -48,46 +48,46 @@ class Shape(var type: Type) {
         val body = arrayListOf<Node>()
         when(type) {
             I -> {
-                body.add(Node(5, 0))
-                body.add(Node(5, 1))
-                body.add(Node(5, 2))
-                body.add(Node(5, 3))
+                body.add(Node(5, 0, color))
+                body.add(Node(5, 1, color))
+                body.add(Node(5, 2, color))
+                body.add(Node(5, 3, color))
             }
             O -> {
-                body.add(Node(5, 0))
-                body.add(Node(6, 0))
-                body.add(Node(5, 1))
-                body.add(Node(6, 1))
+                body.add(Node(5, 0, color))
+                body.add(Node(6, 0, color))
+                body.add(Node(5, 1, color))
+                body.add(Node(6, 1, color))
             }
             T -> {
-                body.add(Node(5, 1))
-                body.add(Node(4, 0))
-                body.add(Node(5, 0))
-                body.add(Node(6, 0))
+                body.add(Node(5, 1, color))
+                body.add(Node(4, 0, color))
+                body.add(Node(5, 0, color))
+                body.add(Node(6, 0, color))
             }
             Z -> {
-                body.add(Node(5, 0))
-                body.add(Node(6, 0))
-                body.add(Node(5, 1))
-                body.add(Node(4, 1))
+                body.add(Node(5, 0, color))
+                body.add(Node(6, 0, color))
+                body.add(Node(5, 1, color))
+                body.add(Node(4, 1, color))
             }
             S -> {
-                body.add(Node(5, 0))
-                body.add(Node(6, 0))
-                body.add(Node(4, 1))
-                body.add(Node(5, 1))
+                body.add(Node(5, 0, color))
+                body.add(Node(6, 0, color))
+                body.add(Node(4, 1, color))
+                body.add(Node(5, 1, color))
             }
             J -> {
-                body.add(Node(4, 0))
-                body.add(Node(5, 0))
-                body.add(Node(6, 0))
-                body.add(Node(6, 1))
+                body.add(Node(4, 0, color))
+                body.add(Node(5, 0, color))
+                body.add(Node(6, 0, color))
+                body.add(Node(6, 1, color))
             }
             L -> {
-                body.add(Node(4, 0))
-                body.add(Node(5, 0))
-                body.add(Node(6, 0))
-                body.add(Node(4, 1))
+                body.add(Node(4, 0, color))
+                body.add(Node(5, 0, color))
+                body.add(Node(6, 0, color))
+                body.add(Node(4, 1, color))
             }
         }
         return body.toTypedArray()

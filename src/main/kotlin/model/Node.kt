@@ -1,8 +1,8 @@
 package model
 
 import model.State.*
-import java.awt.AlphaComposite
 import java.awt.Color
+import java.awt.AlphaComposite
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.geom.RoundRectangle2D
@@ -10,7 +10,7 @@ import java.awt.geom.RoundRectangle2D
 /**
  * Represents the cell of game field.
  */
-class Node(var x: Int, var y: Int) {
+class Node(var x: Int, var y: Int, val color: model.Color) {
 
     var state = ACTIVE
 
@@ -83,7 +83,7 @@ class Node(var x: Int, var y: Int) {
         g as Graphics2D
         g.color = Color.BLACK
         g.fillRect(x * 20, y * 20, 20, 20)
-        g.color = Color.WHITE
+        g.color = color.get()
         g.fill(RoundRectangle2D.Float(((x * 20) + 1).toFloat(), ((y * 20) + 1).toFloat(), 18.0F, 18.0F, 3.0F, 3.0F))
         g.setComposite(AlphaComposite.SrcAtop)
     }

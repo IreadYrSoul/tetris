@@ -75,8 +75,9 @@ class Model(w: Int, h: Int, val input: Input) {
      */
     private fun randomShape(): Shape {
         val types = Type.values()
+        val colors = Color.values()
         val random = Random()
-        return Shape(types[random.nextInt(types.size)])
+        return Shape(types[random.nextInt(types.size)], colors[random.nextInt(colors.size)])
     }
 }
 
