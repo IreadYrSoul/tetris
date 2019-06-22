@@ -14,7 +14,7 @@ object Configuration {
     /**
      * the application logo.
      */
-    const val logo = "/icon/logo.png"
+    const val logo = "icon/logo.png"
 
     /**
      *  the Display height.

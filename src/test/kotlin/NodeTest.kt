@@ -4,7 +4,6 @@ import org.junit.Test
 
 import config.Configuration.width as w
 import config.Configuration.height as h
-import model.Position.*
 
 import org.junit.Before
 
