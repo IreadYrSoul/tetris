@@ -15,20 +15,60 @@ import kotlin.collections.ArrayList
  */
 class Shape(val type: Type, val color: Color) {
 
-    val timer:Timer
+    /**
+     * The body of Shape (4 Nodes).
+     */
+    var body:Array<Node>
 
-    var nodes:Array<Node>
-    var cpNodes:ArrayList<Node>
-    var minX:Int
-    var maxX:Int
-    var minY:Int
-    var maxY:Int
+    /**
+     * Temp copy of Shape body.
+     */
+    var cpBody:ArrayList<Node>
+
+    /**
+     * Able to move down.
+     */
     var active:Boolean
+
+    /**
+     * Able to move left
+     */
+    var left = true
+
+    /**
+     * Able to move right.
+     */
+    var right = true
+
+    /**
+     * Min X of Shape.
+     */
+    private var minX:Int
+
+    /**
+     * Max X of Shape.
+     */
+    private var maxX:Int
+
+    /**
+     * Min Y of Shape.
+     */
+    private var minY:Int
+
+    /**
+     * Max Y of Shape.
+     */
+    private var maxY:Int
+
+    /**
+     * Moving down timer.
+     */
+    private val timer:Timer
 
     init {
         active = true
-        nodes = fill()
-        cpNodes = ArrayList()
+        body = fill()
+        cpBody = ArrayList()
 
         minX = minX()
         maxX = maxX()
@@ -45,7 +85,7 @@ class Shape(val type: Type, val color: Color) {
     }
 
     /**
-     * Create shape body.
+     * Create Shape body.
      */
     private fun fill(): Array<Node> {
         val body = arrayListOf<Node>()
@@ -99,21 +139,27 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Moves Shape to left.
      */
-    fun left() {
-        if (active && minX > 0) {
-            nodes.forEach { it.left() }
+    private fun left() {
+        if (left) {
+            right = true
+            if (active && minX > 0) {
+                body.forEach { it.left() }
+            }
+            minX = minX()
         }
-        minX = minX()
     }
 
     /**
      * Moves Shape to right.
      */
-    fun right() {
-        if (active && maxX < w - 1) {
-            nodes.forEach { it.right() }
+    private fun right() {
+        if (right) {
+            left = true
+            if (active && maxX < w - 1) {
+                body.forEach { it.right() }
+            }
+            maxX = maxX()
         }
-        maxX = maxX()
     }
 
     /**
@@ -121,7 +167,7 @@ class Shape(val type: Type, val color: Color) {
      */
     fun down() {
         if (active && maxY < h - 1) {
-            nodes.forEach { it.down() }
+            body.forEach { it.down() }
         } else {
             active = false
         }
@@ -131,29 +177,32 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Rotates Shape around axis.
      */
-    fun rotate() {
+    private fun rotate() {
         if (type == O) {
             return
         }
-        cpNodes = ArrayList<Node>()
-        for (n in nodes) {
-            cpNodes.add(n.clone())
+        cpBody = ArrayList()
+        for (n in body) {
+            cpBody.add(n.clone())
         }
-        for(n in nodes) {
-            n.rotate(nodes[0])
+        for(n in body) {
+            n.rotate(body[0])
         }
         minX = minX()
         maxX = maxX()
         maxY = maxY()
         minY = minY()
         if(minX < 0 || maxX > w -1 || minY < 0 || maxY > h - 1) {
-            nodes = cpNodes.toTypedArray()
+            body = cpBody.toTypedArray()
         }
     }
 
-    fun maxX():Int {
-        maxX = nodes[0].x
-        for (n in nodes) {
+    /**
+     * Get max X of Shape.
+     */
+    private fun maxX():Int {
+        maxX = body[0].x
+        for (n in body) {
             if (n.x > maxX) {
                 maxX = n.x
             }
@@ -161,9 +210,12 @@ class Shape(val type: Type, val color: Color) {
         return maxX
     }
 
-    fun minX():Int {
-        minX = nodes[0].x
-        for (n in nodes) {
+    /**
+     * Get min X of Shape.
+     */
+    private fun minX():Int {
+        minX = body[0].x
+        for (n in body) {
             if (n.x < minX) {
                 minX = n.x
             }
@@ -171,9 +223,12 @@ class Shape(val type: Type, val color: Color) {
         return minX
     }
 
-    fun maxY():Int {
-        maxY = nodes[0].y
-        for (n in nodes) {
+    /**
+     * Get max Y of Shape.
+     */
+    private fun maxY():Int {
+        maxY = body[0].y
+        for (n in body) {
             if (n.y > maxY) {
                 maxY = n.y
             }
@@ -181,9 +236,12 @@ class Shape(val type: Type, val color: Color) {
         return maxY
     }
 
-    fun minY():Int {
-        minY = nodes[0].y
-        for (n in nodes) {
+    /**
+     * Get min Y of Shape.
+     */
+    private fun minY():Int {
+        minY = body[0].y
+        for (n in body) {
             if (n.y < minY) {
                 minY = n.y
             }
@@ -192,7 +250,7 @@ class Shape(val type: Type, val color: Color) {
     }
 
     /**
-     *
+     * Update Shape process.
      */
     fun update(input: Input) {
         if (input.getKey(KeyEvent.VK_LEFT)) {
@@ -214,9 +272,10 @@ class Shape(val type: Type, val color: Color) {
     }
 
     /**
-     * Renders Shape.
+     * Render Shape process.
+     * Render of each Nodes of Shape body.
      */
     fun render(g:Graphics) {
-        nodes.forEach { it.render(g) }
+        body.forEach { it.render(g) }
     }
 }

@@ -11,7 +11,7 @@ enum class State {
     ACTIVE,
 
     /**
-     * Not active node (static nodes of field)
+     * Not active node (static body of field)
      */
     NOT_ACTIVE
 

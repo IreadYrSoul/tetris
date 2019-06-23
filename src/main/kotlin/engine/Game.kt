@@ -48,17 +48,13 @@ class Game: Runnable {
         model.update()
     }
 
-    private fun input() {
-
-    }
-
-
     private fun render() {
         display.clear()
 
         g.color = Color.GREEN
         frameRate.calculate()
         g.drawString(frameRate.frameRate, 4, 15)
+        g.drawString(model.lines.get(), 135, 15)
 
 
         model.render(g)

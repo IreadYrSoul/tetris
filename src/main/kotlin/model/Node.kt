@@ -6,12 +6,16 @@ import java.awt.AlphaComposite
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.geom.RoundRectangle2D
+import config.Configuration.nodeSize as n
 
 /**
  * Represents the cell of game field.
  */
 class Node(var x: Int, var y: Int, val color: model.Color) {
 
+    /**
+     * State of Node.
+     */
     var state = ACTIVE
 
     /**
@@ -56,21 +60,21 @@ class Node(var x: Int, var y: Int, val color: model.Color) {
     }
 
     /**
-     * Move node to left.
+     * Move Node to left.
      */
     fun left() {
         x--
     }
 
     /**
-     * Move node to right.
+     * Move Node to right.
      */
     fun right() {
         x++
     }
 
     /**
-     * Move node to down.
+     * Move Node to down.
      */
     fun down() {
         y++
@@ -82,15 +86,15 @@ class Node(var x: Int, var y: Int, val color: model.Color) {
     fun render(g: Graphics) {
         g as Graphics2D
         g.color = Color.BLACK
-        g.fillRect(x * 20, y * 20, 20, 20)
+        g.fillRect(x * n, y * n, n, n)
         g.color = color.get()
-        g.fill(RoundRectangle2D.Float(((x * 20) + 1).toFloat(), ((y * 20) + 1).toFloat(), 18.0F, 18.0F, 3.0F, 3.0F))
+        g.fill(RoundRectangle2D.Float(((x * n) + 1).toFloat(), ((y * n) + 1).toFloat(), 18.0F, 18.0F, 3.0F, 3.0F))
         g.setComposite(AlphaComposite.SrcAtop)
     }
 
+    /**
+     * Clones current Node.
+     */
     fun clone() = Node(this.x, this.y, this.color)
 
-    override fun toString(): String {
-        return "[x:$x y:$y]"
-    }
 }

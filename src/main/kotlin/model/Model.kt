@@ -4,28 +4,69 @@ import input.Input
 import java.awt.Graphics
 import java.util.*
 import model.State.NOT_ACTIVE
+import config.Configuration.width as w
 
 /**
  * Represents model of game field.
  */
 class Model(w: Int, h: Int, val input: Input) {
 
+    /**
+     * Map that represents game field.
+     */
     val array: Array<Array<Node?>> = Array(h) { Array<Node?>(w) { null } }
 
-    var shape: Shape
+    /**
+     * State of Shape.
+     */
+    private var state:Boolean
 
-    var state = true
-    var nodes = 0
+    /**
+     * Amount of not active Nodes on field.
+     */
+    private var nodes:Int
+
+    /**
+     * Current Shape.
+     */
+    private var shape: Shape
+
+    /**
+     * Next Shape.
+     */
+    private var nextShape:Shape
+
+    /**
+     * Amount of completed lines.
+     */
+    val lines = Lines
 
     init {
+        nodes = 0
+        state = true
         shape = randomShape()
+        nextShape = randomShape()
     }
 
+    /**
+     * Update process of game field.
+     */
     fun update() {
+        for (n in shape.body) {
+            if (n.x < w -1 && array[n.y][n.x + 1] != null) {
+                shape.right = false
+            } else {
+                shape.right = true
+            }
+            if (n.x > 0 && array[n.y][n.x - 1] != null) {
+                shape.left = false
+            } else {
+                shape.left = true
+            }
+        }
         shape.update(input)
-
         if (nodes != 0) {
-            for (n in shape.nodes) {
+            for (n in shape.body) {
                 if (n.y < array.size - 1) {
                     if (array[n.y + 1][n.x] != null) {
                         shape.active = false
@@ -36,7 +77,6 @@ class Model(w: Int, h: Int, val input: Input) {
                 }
             }
         }
-
         state = shape.active
         if (!state) {
             newShape()
@@ -44,15 +84,22 @@ class Model(w: Int, h: Int, val input: Input) {
         }
     }
 
-    fun newShape() {
-        for (n in shape.nodes) {
+    /**
+     * Generate new Shape and moves Nodes of old Shape to game field.
+     */
+    private fun newShape() {
+        for (n in shape.body) {
             n.state = NOT_ACTIVE
             array[n.y][n.x] = n
             nodes++
         }
-        shape = randomShape()
+        shape = nextShape
+        nextShape = randomShape()
     }
 
+    /**
+     * Checks whether the field contains full lines.
+     */
     private fun checkLine() {
         var y = 0
         var count = 0
@@ -76,10 +123,15 @@ class Model(w: Int, h: Int, val input: Input) {
                     }
                 }
             }
+            lines.inc()
             checkLine()
         }
     }
 
+    /**
+     * Render process of game field.
+     * Render game field (Shape + all not active Nodes).
+     */
     fun render(g: Graphics) {
         shape.render(g)
         for (y in array.size - 1 downTo 0) {
