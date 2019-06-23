@@ -4,8 +4,6 @@ import input.Input
 import java.awt.Graphics
 import java.util.*
 import model.State.NOT_ACTIVE
-import config.Configuration.width as w
-import config.Configuration.height as h
 
 /**
  * Represents model of game field.
@@ -32,6 +30,7 @@ class Model(w: Int, h: Int, val input: Input) {
                     if (array[n.y + 1][n.x] != null) {
                         shape.active = false
                         newShape()
+                        checkLine()
                         break
                     }
                 }
@@ -41,6 +40,7 @@ class Model(w: Int, h: Int, val input: Input) {
         state = shape.active
         if (!state) {
             newShape()
+            checkLine()
         }
     }
 
@@ -54,17 +54,38 @@ class Model(w: Int, h: Int, val input: Input) {
     }
 
     private fun checkLine() {
-        for (a in array) {
-
+        var y = 0
+        var count = 0
+        for (i in array.size - 1 downTo 0) {
+            if (!array[i].contains(null)) {
+                y = i
+                count++
+            }
+            if (count > 0) {
+                break
+            }
+        }
+        if (count > 0) {
+            array[y].fill(null)
+            for (i in y-1 downTo 0) {
+                for (n in array[i]) {
+                    if (n != null) {
+                        n.y++
+                        array[n.y][n.x] = n
+                        array[n.y - 1][n.x] = null
+                    }
+                }
+            }
+            checkLine()
         }
     }
 
     fun render(g: Graphics) {
         shape.render(g)
-        for (i in array) {
-            for (n in array[array.indexOf(i)]) {
-                if (n != null) {
-                    n.render(g)
+        for (y in array.size - 1 downTo 0) {
+            for (x in array[y].size - 1 downTo 0) {
+                if (array[y][x] != null) {
+                    array[y][x]!!.render(g)
                 }
             }
         }

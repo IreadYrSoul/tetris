@@ -8,15 +8,17 @@ import model.Type.*
 import java.awt.Graphics
 import java.awt.event.KeyEvent
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Represents Tetris shape.
  */
 class Shape(val type: Type, val color: Color) {
 
-    val nodes:Array<Node>
     val timer:Timer
 
+    var nodes:Array<Node>
+    var cpNodes:ArrayList<Node>
     var minX:Int
     var maxX:Int
     var minY:Int
@@ -26,6 +28,7 @@ class Shape(val type: Type, val color: Color) {
     init {
         active = true
         nodes = fill()
+        cpNodes = ArrayList()
 
         minX = minX()
         maxX = maxX()
@@ -132,11 +135,20 @@ class Shape(val type: Type, val color: Color) {
         if (type == O) {
             return
         }
+        cpNodes = ArrayList<Node>()
+        for (n in nodes) {
+            cpNodes.add(n.clone())
+        }
         for(n in nodes) {
             n.rotate(nodes[0])
         }
         minX = minX()
         maxX = maxX()
+        maxY = maxY()
+        minY = minY()
+        if(minX < 0 || maxX > w -1 || minY < 0 || maxY > h - 1) {
+            nodes = cpNodes.toTypedArray()
+        }
     }
 
     fun maxX():Int {

@@ -88,4 +88,9 @@ class Node(var x: Int, var y: Int, val color: model.Color) {
         g.setComposite(AlphaComposite.SrcAtop)
     }
 
+    fun clone() = Node(this.x, this.y, this.color)
+
+    override fun toString(): String {
+        return "[x:$x y:$y]"
+    }
 }
