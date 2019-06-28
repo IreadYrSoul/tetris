@@ -269,9 +269,6 @@ class Shape(val type: Type, val color: Color) {
             rotate()
             input.map[KeyEvent.VK_UP] = false
         }
-        if (input.getKey(KeyEvent.VK_SPACE)) {
-            //todo: quick down.
-        }
     }
 
     /**

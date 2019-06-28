@@ -4,6 +4,7 @@ import input.Input
 import java.awt.Graphics
 import java.util.*
 import model.State.NOT_ACTIVE
+import java.awt.event.KeyEvent
 import config.Configuration.width as w
 
 /**
@@ -62,22 +63,55 @@ class Model(w: Int, h: Int, val input: Input) {
             shape.left = !(n.x > 0 && array[n.y][n.x - 1] != null)
         }
         shape.update(input)
+        quickDown()
         if (nodes != 0) {
-            for (n in shape.body) {
-                if (n.y < array.size - 1) {
-                    if (array[n.y + 1][n.x] != null) {
-                        shape.active = false
-                        newShape()
-                        checkLine()
-                        break
-                    }
-                }
-            }
+            collisCheck()
         }
         state = shape.active
         if (!state) {
             newShape()
             checkLine()
+        }
+    }
+
+    /**
+     * Moves the Shape down immediately.
+     */
+    private fun quickDown() {
+        if (input.getKey(KeyEvent.VK_SPACE)) {
+            while (shape.active) {
+                shape.down()
+                if (nodes != 0) {
+                    for (n in shape.body) {
+                        if (n.y < array.size - 1) {
+                            if (array[n.y + 1][n.x] != null) {
+                                shape.active = false
+                                newShape()
+                                checkLine()
+                                input.map[KeyEvent.VK_SPACE] = false
+                                return
+                            }
+                        }
+                    }
+                }
+            }
+            input.map[KeyEvent.VK_SPACE] = false
+        }
+    }
+
+    /**
+     * Check for vertically collisions.
+     */
+    private fun collisCheck() {
+        for (n in shape.body) {
+            if (n.y < array.size - 1) {
+                if (array[n.y + 1][n.x] != null) {
+                    shape.active = false
+                    newShape()
+                    checkLine()
+                    break
+                }
+            }
         }
     }
 
