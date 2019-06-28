@@ -1,31 +1,28 @@
 package engine
 
 import input.Input
-import model.Shape
+
 import model.Model
 import render.Display
-import util.FrameRate
+import util.Stats
 import util.Time
-import java.awt.Color
 import java.awt.Graphics
-import java.util.*
 
-import config.Configuration.displeyWidth as width
-import config.Configuration.displayHeight as height
+import util.Time.second
+import kotlin.system.exitProcess
+
 import config.Configuration.height as h
 import config.Configuration.width as w
 
 /**
- * @author Alexander Naumov.
+ * The game engine.
  */
 class Game: Runnable {
 
-    val UPDATE_RATE = 60.0f
-    val UPDATE_INTERVAL = Time.SECOND / UPDATE_RATE
-    val IDLE_TIME = 1L
-    val CLEAR_COLOR = 0xff000000.toInt()
-
-    val frameRate = FrameRate()
+    val updateRate = 60.0f
+    val updateInterval = second / updateRate
+    val idleTime = 1L
+    val clearColor = 0xff000000.toInt()
 
     @Volatile
     var running = false
@@ -34,31 +31,39 @@ class Game: Runnable {
     lateinit var g: Graphics
     lateinit var gameThread: Thread
 
-    val keys = Input()
-    val model = Model(w, h, keys)
+    private val keys:Input
+    private val model:Model
+    private val stats:Stats
 
-    fun createAndShowGui() {
+    init {
+        keys = Input()
+        model = Model(w, h, keys)
+        stats = Stats(model.nextType, model.nextColor)
+    }
+
+    private fun createAndShowGui() {
         display = Display(keys)
-        display.create(CLEAR_COLOR)
+        display.create(clearColor)
         g = display.getGraphics()
     }
 
-
+    /**
+     * Update process.
+     */
     private fun update() {
         model.update()
+        stats.update(model.nextType, model.nextColor)
     }
 
+    /**
+     * Render process.
+     */
     private fun render() {
         display.clear()
-
-        g.color = Color.GREEN
-        frameRate.calculate()
-        g.drawString(frameRate.frameRate, 4, 15)
-        g.drawString(model.lines.get(), 135, 15)
-
-
+        //render stats.
+        stats.render(g, model.lines)
+        //render shape + model nodes.
         model.render(g)
-
         display.swapBuffers()
     }
 
@@ -79,7 +84,7 @@ class Game: Runnable {
             lastTime = now
             counter += elapsedTime
             var render = false
-            delta += (elapsedTime / UPDATE_INTERVAL)
+            delta += (elapsedTime / updateInterval)
             while (delta > 1) {
                 update()
                 upd++
@@ -94,9 +99,9 @@ class Game: Runnable {
                 render()
                 fps++
             } else {
-                Thread.sleep(IDLE_TIME)
+                Thread.sleep(idleTime)
             }
-            if (counter >= Time.SECOND) {
+            if (counter >= second) {
                 fps = 0
                 upd = 0
                 updl = 0
@@ -105,14 +110,20 @@ class Game: Runnable {
         }
     }
 
+    /**
+     * Shutdown game thread.
+     */
     private fun shutDown() {
         if (Thread.currentThread() != gameThread) {
             running = false
             gameThread.join()
-            System.exit(0)
+            exitProcess(0)
         }
     }
 
+    /**
+     * Start game thread.
+     */
     fun start() {
         if (running) {
             return

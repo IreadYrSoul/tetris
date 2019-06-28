@@ -7,11 +7,15 @@ import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.geom.RoundRectangle2D
 import config.Configuration.nodeSize as n
+import config.Configuration.statDisplayHeight as sh
 
 /**
  * Represents the cell of game field.
  */
-class Node(var x: Int, var y: Int, val color: model.Color) {
+class Node(var x: Int,
+           var y: Int,
+           private val color: model.Color,
+           private val stats:Boolean = false) {
 
     /**
      * State of Node.
@@ -86,10 +90,16 @@ class Node(var x: Int, var y: Int, val color: model.Color) {
     fun render(g: Graphics) {
         g as Graphics2D
         g.color = Color.BLACK
-        g.fillRect(x * n, y * n, n, n)
-        g.color = color.get()
-        g.fill(RoundRectangle2D.Float(((x * n) + 1).toFloat(), ((y * n) + 1).toFloat(), 18.0F, 18.0F, 3.0F, 3.0F))
-        g.setComposite(AlphaComposite.SrcAtop)
+        if (!stats) {
+            g.fillRect(x * n, (y + (sh / n)) * n, n, n)
+            g.color = color.get()
+            g.fill(RoundRectangle2D.Float(((x * n) + 1).toFloat(), (((y + (sh / n)) * n) + 1).toFloat(), 18.0F, 18.0F, 3.0F, 3.0F))
+        } else {
+            g.fillRect(x, y, n, n)
+            g.color = color.get()
+            g.fill(RoundRectangle2D.Float((x + 1).toFloat(), (y + 1).toFloat(), 18.0F, 18.0F, 3.0F, 3.0F))
+        }
+        g.composite = AlphaComposite.SrcAtop
     }
 
     /**

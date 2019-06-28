@@ -1,8 +1,17 @@
 package util
 
+/**
+ * Time helper.
+ */
 object Time {
 
-    const val SECOND = 1000000000L
+    /**
+     * 1 second as microseconds.
+     */
+    const val second = 1000000000L
 
+    /**
+     * Get current nano time.
+     */
     fun get() = System.nanoTime()
 }

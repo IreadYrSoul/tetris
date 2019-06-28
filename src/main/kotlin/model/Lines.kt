@@ -19,9 +19,9 @@ object Lines {
      */
     fun get():String {
         return when {
-            (points in 0..10) -> "LINES:00$points"
-            (points in 10..99) -> "LINES:0$points"
-            else -> "LINES:$points"
+            (points in 0..10) -> "00$points"
+            (points in 10..99) -> "0$points"
+            else -> "$points"
         }
     }
 }

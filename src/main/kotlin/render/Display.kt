@@ -5,8 +5,9 @@ import java.awt.image.BufferStrategy
 import javax.swing.ImageIcon
 import javax.swing.JFrame
 
-import config.Configuration.displayHeight as h
-import config.Configuration.displeyWidth as w
+import config.Configuration.statDisplayHeight as sh
+import config.Configuration.gameDisplayHeight as gh
+import config.Configuration.displayWidth as w
 import config.Configuration.title as appName
 import config.Configuration.logo
 import input.Input
@@ -31,6 +32,9 @@ class Display(val input:Input) {
     lateinit var bufferGraphics: Graphics
     lateinit var bufferStrategy:BufferStrategy
 
+    /**
+     * Create game frame.
+     */
     fun create(_clearColor:Int) {
         if (created){
             return
@@ -40,10 +44,10 @@ class Display(val input:Input) {
         window.iconImage = ImageIcon(Thread.currentThread().getContextClassLoader().getResource(logo)).image
         window.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
 
-        val size = Dimension(w, h)
+        val size = Dimension(w, gh + sh)
 
         content = Canvas()
-        content.setPreferredSize(size)
+        content.preferredSize = size
 
         window.isResizable = false
         window.contentPane.add(content)
@@ -52,7 +56,7 @@ class Display(val input:Input) {
         window.setLocationRelativeTo(null)
         window.isVisible = true
 
-        buffer = BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB)
+        buffer = BufferedImage(w, gh + sh, BufferedImage.TYPE_INT_ARGB)
         bufferData = (buffer.raster.dataBuffer as DataBufferInt).data
         bufferGraphics = buffer.graphics
 
@@ -85,7 +89,4 @@ class Display(val input:Input) {
         window.dispose();
     }
 
-//    public static void addInput(Input input){
-//        window.add(input);
-//    }
 }

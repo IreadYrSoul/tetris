@@ -17,27 +17,32 @@ object Configuration {
     const val logo = "icon/logo.png"
 
     /**
-     *  the Display height.
+     * the statistic Display height px.
      */
-    const val displayHeight = 400
+    const val statDisplayHeight = 60
 
     /**
-     * the Display width.
+     *  the game Display height px.
      */
-    const val displeyWidth = 200
+    const val gameDisplayHeight = 400
 
     /**
-     * the model.Node width/height.
+     * the Display width px.
+     */
+    const val displayWidth = 200
+
+    /**
+     * the model.Node width/height px.
      */
     const val nodeSize = 20
 
     /**
      * the number Nodes of horizontally.
      */
-    const val height = displayHeight / nodeSize
+    const val height = gameDisplayHeight / nodeSize
 
     /**
      * the number Nodes of vertically.
      */
-    const val width = displeyWidth / nodeSize
+    const val width = displayWidth / nodeSize
 }

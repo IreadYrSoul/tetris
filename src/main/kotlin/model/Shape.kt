@@ -109,10 +109,10 @@ class Shape(val type: Type, val color: Color) {
                 body.add(Node(6, 0, color))
             }
             Z -> {
+                body.add(Node(4, 0, color))
                 body.add(Node(5, 0, color))
-                body.add(Node(6, 0, color))
                 body.add(Node(5, 1, color))
-                body.add(Node(4, 1, color))
+                body.add(Node(6, 1, color))
             }
             S -> {
                 body.add(Node(5, 0, color))
@@ -265,9 +265,12 @@ class Shape(val type: Type, val color: Color) {
             down()
             input.map[KeyEvent.VK_DOWN] = false
         }
-        if (input.getKey(KeyEvent.VK_SPACE)) {
+        if (input.getKey(KeyEvent.VK_UP)) {
             rotate()
-            input.map[KeyEvent.VK_SPACE] = false
+            input.map[KeyEvent.VK_UP] = false
+        }
+        if (input.getKey(KeyEvent.VK_SPACE)) {
+            //todo: quick down.
         }
     }
 

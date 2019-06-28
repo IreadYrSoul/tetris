@@ -32,9 +32,14 @@ class Model(w: Int, h: Int, val input: Input) {
     private var shape: Shape
 
     /**
-     * Next Shape.
+     * Type of next Shape.
      */
-    private var nextShape:Shape
+    lateinit var nextType: Type
+
+    /**
+     * Color of next Shape.
+     */
+    lateinit var nextColor: Color
 
     /**
      * Amount of completed lines.
@@ -44,8 +49,8 @@ class Model(w: Int, h: Int, val input: Input) {
     init {
         nodes = 0
         state = true
+        initNextShape()
         shape = randomShape()
-        nextShape = randomShape()
     }
 
     /**
@@ -53,16 +58,8 @@ class Model(w: Int, h: Int, val input: Input) {
      */
     fun update() {
         for (n in shape.body) {
-            if (n.x < w -1 && array[n.y][n.x + 1] != null) {
-                shape.right = false
-            } else {
-                shape.right = true
-            }
-            if (n.x > 0 && array[n.y][n.x - 1] != null) {
-                shape.left = false
-            } else {
-                shape.left = true
-            }
+            shape.right = !(n.x < w -1 && array[n.y][n.x + 1] != null)
+            shape.left = !(n.x > 0 && array[n.y][n.x - 1] != null)
         }
         shape.update(input)
         if (nodes != 0) {
@@ -93,8 +90,8 @@ class Model(w: Int, h: Int, val input: Input) {
             array[n.y][n.x] = n
             nodes++
         }
-        shape = nextShape
-        nextShape = randomShape()
+        shape = Shape(nextType, nextColor)
+        initNextShape()
     }
 
     /**
@@ -151,6 +148,17 @@ class Model(w: Int, h: Int, val input: Input) {
         val colors = Color.values()
         val random = Random()
         return Shape(types[random.nextInt(types.size)], colors[random.nextInt(colors.size)])
+    }
+
+    /**
+     * Generate Type and Color for next Shape.
+     */
+    private fun initNextShape() {
+        val types = Type.values()
+        val colors = Color.values()
+        val random = Random()
+        nextType = types[random.nextInt(types.size)]
+        nextColor = colors[random.nextInt(colors.size)]
     }
 }
 
