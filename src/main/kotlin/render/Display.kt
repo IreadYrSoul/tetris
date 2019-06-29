@@ -2,8 +2,6 @@ package render
 
 
 import java.awt.image.BufferStrategy
-import javax.swing.ImageIcon
-import javax.swing.JFrame
 
 import config.Configuration.statDisplayHeight as sh
 import config.Configuration.gameDisplayHeight as gh
@@ -15,6 +13,7 @@ import java.awt.*
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferInt
 import java.util.*
+import javax.swing.*
 
 
 /**
@@ -31,6 +30,8 @@ class Display(val input:Input) {
     lateinit var bufferData:IntArray
     lateinit var bufferGraphics: Graphics
     lateinit var bufferStrategy:BufferStrategy
+
+    lateinit var exitMenuItem:JMenuItem
 
     /**
      * Create game frame.
@@ -49,6 +50,37 @@ class Display(val input:Input) {
         content = Canvas()
         content.preferredSize = size
 
+        val menuBar = JMenuBar()
+        val menuFont = Font("Arial", Font.BOLD, 10)
+
+        val game = JMenu("Game")
+        val help = JMenu("Help")
+
+        val new = JMenuItem("New")
+        val load = JMenuItem("Load")
+        val scores =JMenuItem("Scores")
+        exitMenuItem = JMenuItem("Exit")
+        val about =JMenuItem("About")
+
+        game.font = menuFont
+        new.font = menuFont
+        load.font = menuFont
+        scores.font = menuFont
+        exitMenuItem.font = menuFont
+        help.font = menuFont
+        about.font = menuFont
+
+        game.add(new)
+        game.add(load)
+        game.add(scores)
+        game.add(exitMenuItem)
+
+        help.add(about)
+
+        menuBar.add(game)
+        menuBar.add(help)
+
+        window.jMenuBar = menuBar
         window.isResizable = false
         window.contentPane.add(content)
         window.pack()

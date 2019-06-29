@@ -44,6 +44,9 @@ class Game: Runnable {
     private fun createAndShowGui() {
         display = Display(keys)
         display.create(clearColor)
+
+        display.exitMenuItem.addActionListener { e -> shutDown()}
+
         g = display.getGraphics()
     }
 
@@ -116,6 +119,7 @@ class Game: Runnable {
     private fun shutDown() {
         if (Thread.currentThread() != gameThread) {
             running = false
+            display.destroy()
             gameThread.join()
             exitProcess(0)
         }
