@@ -78,7 +78,7 @@ class Model(w: Int, h: Int, val input: Input) {
      * Moves the Shape down immediately.
      */
     private fun quickDown() {
-        if (input.getKey(KeyEvent.VK_SPACE)) {
+        if (input.getKey(KeyEvent.VK_SPACE) && !shape.isPaused()) {
             while (shape.active) {
                 shape.down()
                 if (nodes != 0) {

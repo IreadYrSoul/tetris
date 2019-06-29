@@ -63,10 +63,16 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Moving down timer.
      */
-    private val timer:Timer
+    private lateinit var timer:Timer
+
+    /**
+     * Show whether the game is on pause.
+     */
+    private var isPaused:Boolean
 
     init {
         active = true
+        isPaused = false
         body = fill()
         cpBody = ArrayList()
 
@@ -74,14 +80,7 @@ class Shape(val type: Type, val color: Color) {
         maxX = maxX()
         minY = minY()
         maxY = maxY()
-
-        timer = Timer()
-        val task = object: TimerTask() {
-            override fun run() {
-                down()
-            }
-        }
-        timer.schedule(task, 1000, 1000)
+        fall()
     }
 
     /**
@@ -91,8 +90,8 @@ class Shape(val type: Type, val color: Color) {
         val body = arrayListOf<Node>()
         when(type) {
             I -> {
-                body.add(Node(5, 0, color))
                 body.add(Node(5, 1, color))
+                body.add(Node(5, 0, color))
                 body.add(Node(5, 2, color))
                 body.add(Node(5, 3, color))
             }
@@ -103,14 +102,14 @@ class Shape(val type: Type, val color: Color) {
                 body.add(Node(6, 1, color))
             }
             T -> {
+                body.add(Node(5, 0, color))
                 body.add(Node(5, 1, color))
                 body.add(Node(4, 0, color))
-                body.add(Node(5, 0, color))
                 body.add(Node(6, 0, color))
             }
             Z -> {
-                body.add(Node(4, 0, color))
                 body.add(Node(5, 0, color))
+                body.add(Node(4, 0, color))
                 body.add(Node(5, 1, color))
                 body.add(Node(6, 1, color))
             }
@@ -121,19 +120,46 @@ class Shape(val type: Type, val color: Color) {
                 body.add(Node(5, 1, color))
             }
             J -> {
-                body.add(Node(4, 0, color))
                 body.add(Node(5, 0, color))
+                body.add(Node(4, 0, color))
                 body.add(Node(6, 0, color))
                 body.add(Node(6, 1, color))
             }
             L -> {
-                body.add(Node(4, 0, color))
                 body.add(Node(5, 0, color))
+                body.add(Node(4, 0, color))
                 body.add(Node(6, 0, color))
                 body.add(Node(4, 1, color))
             }
         }
         return body.toTypedArray()
+    }
+
+    /**
+     * Pause the game.
+     */
+    private fun pause() {
+        this.timer.cancel()
+    }
+
+    /**
+     * Resume the game.
+     */
+    private fun resume() {
+        fall()
+    }
+
+    /**
+     * Moves down Shape per 1 second.
+     */
+    private fun fall() {
+        this.timer = Timer()
+        val task = object: TimerTask() {
+            override fun run() {
+                down()
+            }
+        }
+        this.timer.schedule(task, 0, 750)
     }
 
     /**
@@ -253,15 +279,15 @@ class Shape(val type: Type, val color: Color) {
      * Update Shape process.
      */
     fun update(input: Input) {
-        if (input.getKey(KeyEvent.VK_LEFT)) {
+        if (input.getKey(KeyEvent.VK_LEFT) && !isPaused) {
             left()
             input.map[KeyEvent.VK_LEFT] = false
         }
-        if (input.getKey(KeyEvent.VK_RIGHT)) {
+        if (input.getKey(KeyEvent.VK_RIGHT) && !isPaused) {
             right()
             input.map[KeyEvent.VK_RIGHT] = false
         }
-        if (input.getKey(KeyEvent.VK_DOWN)) {
+        if (input.getKey(KeyEvent.VK_DOWN) && !isPaused) {
             down()
             input.map[KeyEvent.VK_DOWN] = false
         }
@@ -269,7 +295,23 @@ class Shape(val type: Type, val color: Color) {
             rotate()
             input.map[KeyEvent.VK_UP] = false
         }
+
+        if (input.getKey(KeyEvent.VK_P)) {
+            if (!isPaused) {
+                isPaused = true
+                pause()
+            } else {
+                isPaused = false
+                resume()
+            }
+            input.map[KeyEvent.VK_P] = false
+        }
     }
+
+    /**
+     * isPaused getter.
+     */
+    fun isPaused() = isPaused
 
     /**
      * Render Shape process.
