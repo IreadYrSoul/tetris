@@ -3,10 +3,8 @@ package model
 import config.Configuration.height as h
 import config.Configuration.width as w
 
-import input.Input
 import model.Type.*
 import java.awt.Graphics
-import java.awt.event.KeyEvent
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -18,17 +16,17 @@ class Shape(val type: Type, val color: Color) {
     /**
      * The body of Shape (4 Nodes).
      */
-    var body:Array<Node>
+    var body: Array<Node>
 
     /**
      * Temp copy of Shape body.
      */
-    var cpBody:ArrayList<Node>
+    var cpBody: ArrayList<Node>
 
     /**
      * Able to move down.
      */
-    var active:Boolean
+    var active: Boolean
 
     /**
      * Able to move left
@@ -43,39 +41,32 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Min X of Shape.
      */
-    private var minX:Int
+    private var minX: Int
 
     /**
      * Max X of Shape.
      */
-    private var maxX:Int
+    private var maxX: Int
 
     /**
      * Min Y of Shape.
      */
-    private var minY:Int
+    private var minY: Int
 
     /**
      * Max Y of Shape.
      */
-    private var maxY:Int
+    private var maxY: Int
 
     /**
      * Moving down timer.
      */
-    private lateinit var timer:Timer
-
-    /**
-     * Show whether the game is on pause.
-     */
-    private var isPaused:Boolean
+    private lateinit var timer: Timer
 
     init {
         active = true
-        isPaused = false
         body = fill()
         cpBody = ArrayList()
-
         minX = minX()
         maxX = maxX()
         minY = minY()
@@ -88,7 +79,7 @@ class Shape(val type: Type, val color: Color) {
      */
     private fun fill(): Array<Node> {
         val body = arrayListOf<Node>()
-        when(type) {
+        when (type) {
             I -> {
                 body.add(Node(5, 1, color))
                 body.add(Node(5, 0, color))
@@ -138,14 +129,14 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Pause the game.
      */
-    private fun pause() {
+    fun pause() {
         this.timer.cancel()
     }
 
     /**
      * Resume the game.
      */
-    private fun resume() {
+    fun resume() {
         fall()
     }
 
@@ -154,7 +145,7 @@ class Shape(val type: Type, val color: Color) {
      */
     private fun fall() {
         this.timer = Timer()
-        val task = object: TimerTask() {
+        val task = object : TimerTask() {
             override fun run() {
                 down()
             }
@@ -165,7 +156,7 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Moves Shape to left.
      */
-    private fun left() {
+    fun left() {
         if (left) {
             right = true
             if (active && minX > 0) {
@@ -178,7 +169,7 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Moves Shape to right.
      */
-    private fun right() {
+    fun right() {
         if (right) {
             left = true
             if (active && maxX < w - 1) {
@@ -203,7 +194,7 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Rotates Shape around axis.
      */
-    private fun rotate() {
+    fun rotate(array: Array<Array<Node?>>) {
         if (type == O) {
             return
         }
@@ -211,22 +202,27 @@ class Shape(val type: Type, val color: Color) {
         for (n in body) {
             cpBody.add(n.clone())
         }
-        for(n in body) {
+        for (n in body) {
             n.rotate(body[0])
         }
         minX = minX()
         maxX = maxX()
         maxY = maxY()
         minY = minY()
-        if(minX < 0 || maxX > w -1 || minY < 0 || maxY > h - 1) {
+        if (minX < 0 || maxX > w - 1 || minY < 0 || maxY > h - 1) {
             body = cpBody.toTypedArray()
+        }
+        for (n in body) {
+            if (array[n.y][n.x] != null) {
+                body = cpBody.toTypedArray()
+            }
         }
     }
 
     /**
      * Get max X of Shape.
      */
-    private fun maxX():Int {
+    private fun maxX(): Int {
         maxX = body[0].x
         for (n in body) {
             if (n.x > maxX) {
@@ -239,7 +235,7 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Get min X of Shape.
      */
-    private fun minX():Int {
+    private fun minX(): Int {
         minX = body[0].x
         for (n in body) {
             if (n.x < minX) {
@@ -252,7 +248,7 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Get max Y of Shape.
      */
-    private fun maxY():Int {
+    private fun maxY(): Int {
         maxY = body[0].y
         for (n in body) {
             if (n.y > maxY) {
@@ -265,7 +261,7 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Get min Y of Shape.
      */
-    private fun minY():Int {
+    private fun minY(): Int {
         minY = body[0].y
         for (n in body) {
             if (n.y < minY) {
@@ -276,48 +272,10 @@ class Shape(val type: Type, val color: Color) {
     }
 
     /**
-     * Update Shape process.
-     */
-    fun update(input: Input) {
-        if (input.getKey(KeyEvent.VK_LEFT) && !isPaused) {
-            left()
-            input.map[KeyEvent.VK_LEFT] = false
-        }
-        if (input.getKey(KeyEvent.VK_RIGHT) && !isPaused) {
-            right()
-            input.map[KeyEvent.VK_RIGHT] = false
-        }
-        if (input.getKey(KeyEvent.VK_DOWN) && !isPaused) {
-            down()
-            input.map[KeyEvent.VK_DOWN] = false
-        }
-        if (input.getKey(KeyEvent.VK_UP)) {
-            rotate()
-            input.map[KeyEvent.VK_UP] = false
-        }
-
-        if (input.getKey(KeyEvent.VK_P)) {
-            if (!isPaused) {
-                isPaused = true
-                pause()
-            } else {
-                isPaused = false
-                resume()
-            }
-            input.map[KeyEvent.VK_P] = false
-        }
-    }
-
-    /**
-     * isPaused getter.
-     */
-    fun isPaused() = isPaused
-
-    /**
      * Render Shape process.
      * Render of each Nodes of Shape body.
      */
-    fun render(g:Graphics) {
+    fun render(g: Graphics) {
         body.forEach { it.render(g) }
     }
 }

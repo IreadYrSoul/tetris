@@ -28,6 +28,11 @@ class Model(w: Int, h: Int, val input: Input) {
     private var nodes:Int
 
     /**
+     * Show whether the game is on pause.
+     */
+    private var isPaused:Boolean
+
+    /**
      * Current Shape.
      */
     private var shape: Shape
@@ -49,6 +54,7 @@ class Model(w: Int, h: Int, val input: Input) {
 
     init {
         nodes = 0
+        isPaused = false
         state = true
         initNextShape()
         shape = randomShape()
@@ -62,8 +68,7 @@ class Model(w: Int, h: Int, val input: Input) {
             shape.right = !(n.x < w -1 && array[n.y][n.x + 1] != null)
             shape.left = !(n.x > 0 && array[n.y][n.x - 1] != null)
         }
-        shape.update(input)
-        quickDown()
+        input(input)
         if (nodes != 0) {
             collisCheck()
         }
@@ -75,10 +80,36 @@ class Model(w: Int, h: Int, val input: Input) {
     }
 
     /**
-     * Moves the Shape down immediately.
+     * Handles Shape action.
      */
-    private fun quickDown() {
-        if (input.getKey(KeyEvent.VK_SPACE) && !shape.isPaused()) {
+    private fun input(input: Input) {
+        if (input.getKey(KeyEvent.VK_LEFT) && !isPaused) {
+            shape.left()
+            input.map[KeyEvent.VK_LEFT] = false
+        }
+        if (input.getKey(KeyEvent.VK_RIGHT) && !isPaused) {
+            shape.right()
+            input.map[KeyEvent.VK_RIGHT] = false
+        }
+        if (input.getKey(KeyEvent.VK_DOWN) && !isPaused) {
+            shape.down()
+            input.map[KeyEvent.VK_DOWN] = false
+        }
+        if (input.getKey(KeyEvent.VK_UP) && !isPaused) {
+            shape.rotate(array)
+            input.map[KeyEvent.VK_UP] = false
+        }
+        if (input.getKey(KeyEvent.VK_P)) {
+            if (!isPaused) {
+                isPaused = true
+                shape.pause()
+            } else {
+                isPaused = false
+                shape.resume()
+            }
+            input.map[KeyEvent.VK_P] = false
+        }
+        if (input.getKey(KeyEvent.VK_SPACE) && !isPaused) {
             while (shape.active) {
                 shape.down()
                 if (nodes != 0) {
