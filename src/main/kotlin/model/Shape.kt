@@ -215,6 +215,10 @@ class Shape(val type: Type, val color: Color) {
         for (n in body) {
             if (array[n.y][n.x] != null) {
                 body = cpBody.toTypedArray()
+                minX = minX()
+                maxX = maxX()
+                maxY = maxY()
+                minY = minY()
             }
         }
     }

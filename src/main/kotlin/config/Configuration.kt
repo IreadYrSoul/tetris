@@ -17,6 +17,11 @@ object Configuration {
     const val logo = "icon/logo.png"
 
     /**
+     * the logo for info frame.
+     */
+    const val infoLogo = "icon/big-logo.png"
+
+    /**
      * the statistic Display height px.
      */
     const val statDisplayHeight = 60

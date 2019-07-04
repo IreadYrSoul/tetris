@@ -10,10 +10,14 @@ import config.Configuration.title as appName
 import config.Configuration.logo
 import input.Input
 import java.awt.*
+import java.awt.event.KeyEvent
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferInt
 import java.util.*
 import javax.swing.*
+import javax.swing.WindowConstants.EXIT_ON_CLOSE
 
 
 /**
@@ -43,12 +47,13 @@ class Display(val input:Input) {
         window = JFrame()
         window.title = appName
         window.iconImage = ImageIcon(Thread.currentThread().getContextClassLoader().getResource(logo)).image
-        window.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
 
         val size = Dimension(w, gh + sh)
 
         content = Canvas()
         content.preferredSize = size
+
+        val a = About(size)
 
         val menuBar = JMenuBar()
         val menuFont = Font("Arial", Font.BOLD, 10)
@@ -87,6 +92,22 @@ class Display(val input:Input) {
         window.add(input)
         window.setLocationRelativeTo(null)
         window.isVisible = true
+
+        window.addWindowListener(object:WindowAdapter() {
+            override fun windowClosing(e: WindowEvent?) {
+                when (JOptionPane.showConfirmDialog(window, "Close with saving?", "Exit window", JOptionPane.YES_NO_OPTION)) {
+                    JOptionPane.YES_OPTION ->  println("with saving...")
+                    JOptionPane.NO_OPTION -> println("without saving...")
+                }
+                window.defaultCloseOperation = EXIT_ON_CLOSE
+            }
+        })
+
+        about.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0)
+        about.addActionListener {
+            a.location = Point(window.location.x, (window.location.y + size.height / 2) - 80)
+            a.isVisible = true
+        }
 
         buffer = BufferedImage(w, gh + sh, BufferedImage.TYPE_INT_ARGB)
         bufferData = (buffer.raster.dataBuffer as DataBufferInt).data

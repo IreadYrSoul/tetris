@@ -2,7 +2,6 @@ package input;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
 
 public class Input extends JComponent {
 

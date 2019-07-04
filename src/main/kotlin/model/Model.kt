@@ -66,7 +66,9 @@ class Model(w: Int, h: Int, val input: Input) {
     fun update() {
         for (n in shape.body) {
             shape.right = !(n.x < w -1 && array[n.y][n.x + 1] != null)
+            if (!shape.right) break
             shape.left = !(n.x > 0 && array[n.y][n.x - 1] != null)
+            if (!shape.right) break
         }
         input(input)
         if (nodes != 0) {
