@@ -95,7 +95,7 @@ class Display(val input:Input) {
 
         window.addWindowListener(object:WindowAdapter() {
             override fun windowClosing(e: WindowEvent?) {
-                when (JOptionPane.showConfirmDialog(window, "Close with saving?", "Exit window", JOptionPane.YES_NO_OPTION)) {
+                when (JOptionPane.showConfirmDialog(window, "Close with saving?", "Exit Game", JOptionPane.YES_NO_OPTION)) {
                     JOptionPane.YES_OPTION ->  println("with saving...")
                     JOptionPane.NO_OPTION -> println("without saving...")
                 }
