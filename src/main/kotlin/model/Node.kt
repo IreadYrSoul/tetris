@@ -103,6 +103,17 @@ class Node(var x: Int,
     }
 
     /**
+     * Render shadow node.
+     */
+    fun renderShadow(g: Graphics) {
+        g as Graphics2D
+        g.color = Color.BLACK
+        g.fillRect(x * n, (y + (sh / n)) * n, n, n)
+        g.color = Color.WHITE
+        g.draw(RoundRectangle2D.Float(((x * n) + 1).toFloat(), (((y + (sh / n)) * n) + 1).toFloat(), 18.0F, 18.0F, 3.0F, 3.0F))
+    }
+
+    /**
      * Clones current Node.
      */
     fun clone() = Node(this.x, this.y, this.color)

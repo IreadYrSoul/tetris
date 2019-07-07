@@ -10,27 +10,32 @@ import config.Configuration.width as w
 /**
  * Represents model of game field.
  */
-class Model(w: Int, h: Int, val input: Input) {
+class Model(private val w: Int, private val h: Int, private val input: Input) {
 
     /**
      * Map that represents game field.
      */
-    val array: Array<Array<Node?>> = Array(h) { Array<Node?>(w) { null } }
+    private val array: Array<Array<Node?>> = Array(h) { Array<Node?>(w) { null } }
+
+    /**
+     * Shadow of Shape.
+     */
+    private val shadow: Array<Node?>
 
     /**
      * State of Shape.
      */
-    private var state:Boolean
+    private var state: Boolean
 
     /**
      * Amount of not active Nodes on field.
      */
-    private var nodes:Int
+    private var nodes: Int
 
     /**
      * Show whether the game is on pause.
      */
-    private var isPaused:Boolean
+    private var isPaused: Boolean
 
     /**
      * Current Shape.
@@ -58,6 +63,10 @@ class Model(w: Int, h: Int, val input: Input) {
         state = true
         initNextShape()
         shape = randomShape()
+        shadow = Array(4) { null }
+        for (i in shape.body.indices) {
+            shadow[i] = shape.body[i].clone()
+        }
     }
 
     /**
@@ -65,7 +74,7 @@ class Model(w: Int, h: Int, val input: Input) {
      */
     fun update() {
         for (n in shape.body) {
-            shape.right = !(n.x < w -1 && array[n.y][n.x + 1] != null)
+            shape.right = !(n.x < w - 1 && array[n.y][n.x + 1] != null)
             if (!shape.right) break
             shape.left = !(n.x > 0 && array[n.y][n.x - 1] != null)
             if (!shape.right) break
@@ -130,6 +139,39 @@ class Model(w: Int, h: Int, val input: Input) {
             }
             input.map[KeyEvent.VK_SPACE] = false
         }
+        updateShadow()
+    }
+
+    /**
+     * Generate thr "Shadow" of Shape.
+     * Shows the place where the Shape will be installed,
+     * if Shape will be move same.
+     */
+    private fun updateShadow() {
+        for (i in shape.body.indices) {
+            shadow[i] = shape.body[i].clone()
+        }
+        var a = true
+        while (a) {
+            for (n in shadow) {
+                n!!.down()
+                if (nodes == 0) {
+                    if (n.y == h - 1) {
+                        a = false
+                    }
+                } else {
+                    if (n.y == h - 1 || (n.y < h - 1 && array[n.y + 1][n.x] != null)) a = false
+                }
+            }
+            if (!a) return
+        }
+    }
+
+    /**
+     * Render shadow.
+     */
+    private fun renderShadow(g: Graphics) {
+        shadow.forEach { it!!.renderShadow(g) }
     }
 
     /**
@@ -178,7 +220,7 @@ class Model(w: Int, h: Int, val input: Input) {
         }
         if (count > 0) {
             array[y].fill(null)
-            for (i in y-1 downTo 0) {
+            for (i in y - 1 downTo 0) {
                 for (n in array[i]) {
                     if (n != null) {
                         n.y++
@@ -198,6 +240,7 @@ class Model(w: Int, h: Int, val input: Input) {
      */
     fun render(g: Graphics) {
         shape.render(g)
+        renderShadow(g)
         for (y in array.size - 1 downTo 0) {
             for (x in array[y].size - 1 downTo 0) {
                 if (array[y][x] != null) {
@@ -228,4 +271,3 @@ class Model(w: Int, h: Int, val input: Input) {
         nextColor = colors[random.nextInt(colors.size)]
     }
 }
-
