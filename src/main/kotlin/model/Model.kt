@@ -4,18 +4,19 @@ import input.Input
 import java.awt.Graphics
 import java.util.*
 import model.State.NOT_ACTIVE
+import util.GameSerializer
 import java.awt.event.KeyEvent
 import config.Configuration.width as w
 
 /**
  * Represents model of game field.
  */
-class Model(private val w: Int, private val h: Int, private val input: Input) {
+class Model(val w: Int, val h: Int, private val input: Input) {
 
     /**
      * Map that represents game field.
      */
-    private val array: Array<Array<Node?>> = Array(h) { Array<Node?>(w) { null } }
+    var array: Array<Array<Node?>> = Array(h) { Array<Node?>(w) { null } }
 
     /**
      * Shadow of Shape.
@@ -40,7 +41,7 @@ class Model(private val w: Int, private val h: Int, private val input: Input) {
     /**
      * Current Shape.
      */
-    private var shape: Shape
+    var shape: Shape
 
     /**
      * Type of next Shape.
@@ -55,7 +56,7 @@ class Model(private val w: Int, private val h: Int, private val input: Input) {
     /**
      * Amount of completed lines.
      */
-    val lines = Lines
+    var lines = Lines
 
     init {
         nodes = 0
@@ -248,6 +249,14 @@ class Model(private val w: Int, private val h: Int, private val input: Input) {
                 }
             }
         }
+    }
+
+    fun saveToFile() {
+        GameSerializer.write(this)
+    }
+
+    fun loadFromFile() {
+
     }
 
     /**

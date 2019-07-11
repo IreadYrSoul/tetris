@@ -9,6 +9,10 @@ import util.Time
 import java.awt.Graphics
 
 import util.Time.second
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
+import javax.swing.JOptionPane
+import javax.swing.WindowConstants
 import kotlin.system.exitProcess
 
 import config.Configuration.height as h
@@ -44,10 +48,19 @@ class Game: Runnable {
     private fun createAndShowGui() {
         display = Display(keys)
         display.create(clearColor)
+        g = display.getGraphics()
 
         display.exitMenuItem.addActionListener { e -> shutDown()}
 
-        g = display.getGraphics()
+        display.window.addWindowListener(object: WindowAdapter() {
+            override fun windowClosing(e: WindowEvent?) {
+                when (JOptionPane.showConfirmDialog(display.window, "Close with saving?", "Exit Game", JOptionPane.YES_NO_OPTION)) {
+                    JOptionPane.YES_OPTION ->  model.saveToFile()
+                    JOptionPane.NO_OPTION -> println("without saving...")
+                }
+                display.window.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+            }
+        })
     }
 
     /**

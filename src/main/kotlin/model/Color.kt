@@ -45,8 +45,8 @@ enum class Color {
     /**
      * Get appropriate color.
      */
-    fun get():Color {
-        when(this) {
+    fun get(): Color {
+        when (this) {
             RED -> return Color(255, 68, 68)
             GREEN -> return Color(0, 200, 81)
             BLUE -> return Color(66, 133, 244)
@@ -56,4 +56,17 @@ enum class Color {
             ORANGE -> return Color(255, 187, 51)
         }
     }
+
+    fun getCode(): String {
+        when (this) {
+            RED -> return "R"
+            GREEN -> return "G"
+            BLUE -> return "B"
+            WHITE -> return "W"
+            VIOLET -> return "V"
+            YELLOW -> return "Y"
+            ORANGE -> return "O"
+        }
+    }
+
 }

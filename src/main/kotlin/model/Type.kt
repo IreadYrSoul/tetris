@@ -45,5 +45,18 @@ enum class Type {
      *  |_|_|_|
      *  |_|
      */
-    L
+    L;
+
+    fun getCode(): String {
+        when (this) {
+            O -> return "O"
+            T -> return "T"
+            Z -> return "Z"
+            S -> return "S"
+            I -> return "I"
+            T -> return "T"
+            J -> return "J"
+            L -> return "L"
+        }
+    }
 }

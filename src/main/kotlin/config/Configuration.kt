@@ -50,4 +50,9 @@ object Configuration {
      * the number Nodes of vertically.
      */
     const val width = displayWidth / nodeSize
+
+    /**
+     * the file path for game save.
+     */
+    const val filePath = "C:\\tetris\\game.dat"
 }

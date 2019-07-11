@@ -5,7 +5,7 @@ package model
  */
 object Lines {
 
-    private var points = 0
+    var points = 0
 
     /**
      * Increments amount completed lines + 1

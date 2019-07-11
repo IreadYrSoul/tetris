@@ -93,16 +93,6 @@ class Display(val input:Input) {
         window.setLocationRelativeTo(null)
         window.isVisible = true
 
-        window.addWindowListener(object:WindowAdapter() {
-            override fun windowClosing(e: WindowEvent?) {
-                when (JOptionPane.showConfirmDialog(window, "Close with saving?", "Exit Game", JOptionPane.YES_NO_OPTION)) {
-                    JOptionPane.YES_OPTION ->  println("with saving...")
-                    JOptionPane.NO_OPTION -> println("without saving...")
-                }
-                window.defaultCloseOperation = EXIT_ON_CLOSE
-            }
-        })
-
         about.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0)
         about.addActionListener {
             a.location = Point(window.location.x, (window.location.y + size.height / 2) - 80)

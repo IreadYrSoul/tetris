@@ -11,7 +11,7 @@ import kotlin.collections.ArrayList
 /**
  * Represents Tetris shape.
  */
-class Shape(val type: Type, val color: Color) {
+class Shape(var type: Type, var color: Color) {
 
     /**
      * The body of Shape (4 Nodes).
@@ -62,6 +62,12 @@ class Shape(val type: Type, val color: Color) {
      * Moving down timer.
      */
     private lateinit var timer: Timer
+
+    constructor (type:Type, color: Color, body:Array<Node>) : this(type, color) {
+        this.body = body
+        this.type = type
+        this.color = color
+    }
 
     init {
         active = true
@@ -226,7 +232,7 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Get max X of Shape.
      */
-    private fun maxX(): Int {
+    fun maxX(): Int {
         maxX = body[0].x
         for (n in body) {
             if (n.x > maxX) {
@@ -239,7 +245,7 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Get min X of Shape.
      */
-    private fun minX(): Int {
+    fun minX(): Int {
         minX = body[0].x
         for (n in body) {
             if (n.x < minX) {
@@ -252,7 +258,7 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Get max Y of Shape.
      */
-    private fun maxY(): Int {
+    fun maxY(): Int {
         maxY = body[0].y
         for (n in body) {
             if (n.y > maxY) {
@@ -265,7 +271,7 @@ class Shape(val type: Type, val color: Color) {
     /**
      * Get min Y of Shape.
      */
-    private fun minY(): Int {
+    fun minY(): Int {
         minY = body[0].y
         for (n in body) {
             if (n.y < minY) {

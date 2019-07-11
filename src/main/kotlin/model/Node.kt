@@ -118,4 +118,5 @@ class Node(var x: Int,
      */
     fun clone() = Node(this.x, this.y, this.color)
 
+    fun serialize() = if (state == ACTIVE) "$y $x ${color.getCode()}" else color.getCode()
 }
