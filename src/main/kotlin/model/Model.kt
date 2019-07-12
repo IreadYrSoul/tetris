@@ -31,7 +31,7 @@ class Model(val w: Int, val h: Int, private val input: Input) {
     /**
      * Amount of not active Nodes on field.
      */
-    private var nodes: Int
+    var nodes: Int
 
     /**
      * Show whether the game is on pause.
@@ -138,6 +138,8 @@ class Model(val w: Int, val h: Int, private val input: Input) {
                     }
                 }
             }
+            shape.active = false
+            newShape()
             input.map[KeyEvent.VK_SPACE] = false
         }
         updateShadow()

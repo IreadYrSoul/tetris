@@ -4,6 +4,7 @@ import input.Input
 
 import model.Model
 import render.Display
+import util.GameSerializer
 import util.Stats
 import util.Time
 import java.awt.Graphics
@@ -41,7 +42,12 @@ class Game: Runnable {
 
     init {
         keys = Input()
-        model = Model(w, h, keys)
+        val game = GameSerializer.read(keys)
+        if (game == null) {
+            model = Model(w, h, keys)
+        } else {
+            model = game
+        }
         stats = Stats(model.nextType, model.nextColor)
     }
 

@@ -35,25 +35,29 @@ object GameSerializer {
             it.print(createLine(model.shape.body.toList()))
             it.print("\n\n")
             //write model
-            it.print("[Model] \n")
+            it.print("[Model]\n")
             it.print("width=${model.w} height=${model.h}\n")
             for (line in model.array) {
                 it.print(createLine(line.toList()))
-                it.print("\n")
+                if (model.array.indexOf(line) < model.array.size - 1) it.print("\n")
             }
         }
-
     }
 
     /**
      * Load game.
      * Reads .dat file and convert it to Model.
      */
-    fun read(input: Input):Model {
+    fun read(input: Input):Model? {
         var lineIndex = 0
         var shapeIndex = 0
         var modelIndex = 0
+        var nodes = 0
+        if (!file.exists()) {
+            return null
+        }
         val lines = file.readLines()
+        file.delete()
         for (i in lines.indices) {
             if (lines[i] == "[Lines]") {
                 lineIndex = i + 1
@@ -72,12 +76,12 @@ object GameSerializer {
         //read shape.
         val list = arrayListOf<Node>()
         val params = lines[shapeIndex].split(" ")
-        val color = params[0].split("=")[1]
         val type = params[0].split("=")[1]
+        val color = params[1].split("=")[1]
         val shapeLine = lines[shapeIndex + 1].removeBraces().split("-")
         for (code in shapeLine) {
             val codes = code.split(" ")
-            list.add(Node(codes[0].toInt(), codes[1].toInt(), getColor(codes[2])))
+            list.add(Node(codes[1].toInt(), codes[0].toInt(), getColor(codes[2])))
         }
         val shape = Shape(getType(type), getColor(color), list.toTypedArray())
         //read model.
@@ -90,15 +94,17 @@ object GameSerializer {
             val line = lines[i].removeBraces().split("-")
             for (j in line.indices) {
                 if (line[j] != "N") {
-                    val node = Node(i, j, getColor(line[j]))
+                    val node = Node(j,i - (modelIndex + 1 ), getColor(line[j]))
                     node.state = State.NOT_ACTIVE
-                    array[i][j] = node
+                    array[i - (modelIndex + 1 )][j] = node
+                    nodes++
                 }
             }
         }
         val model = Model(w, h, input)
         model.shape = shape
         model.array = array
+        model.nodes = nodes
         return model
     }
 
