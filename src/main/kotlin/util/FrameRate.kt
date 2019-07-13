@@ -6,7 +6,7 @@ package util
  */
 class FrameRate {
 
-    var frameRate:String
+    var rate:String
     private var lastTime:Long
     private var delta:Long
     private var frameCount:Int
@@ -15,7 +15,7 @@ class FrameRate {
         frameCount = 0
         delta = 0
         lastTime = System.currentTimeMillis()
-        frameRate = "FPS 0"
+        rate = "FPS 0"
     }
 
     /**
@@ -29,7 +29,11 @@ class FrameRate {
         frameCount++
         if (delta > 1000) {
             delta -= 1000
-            frameRate = String.format("FPS $frameCount")
+            if (frameCount < 10) {
+                rate = String.format("FPS 0$frameCount")
+            } else {
+                rate = String.format("FPS $frameCount")
+            }
             frameCount = 0
         }
     }

@@ -1,5 +1,7 @@
 package config
 
+import java.lang.RuntimeException
+
 
 /**
  * Contains configuration app properties.
@@ -24,12 +26,12 @@ object Configuration {
     /**
      * the statistic Display height px.
      */
-    const val statDisplayHeight = 60
+    const val statDisplayHeight = 80
 
     /**
      *  the game Display height px.
      */
-    const val gameDisplayHeight = 400
+    const val gameDisplayHeight = 460
 
     /**
      * the Display width px.
@@ -54,5 +56,23 @@ object Configuration {
     /**
      * the file path for game save.
      */
-    const val filePath = "C:\\tetris\\game.dat"
+     val filePath = filePath()
+
+    /**
+     * Get file path for game.dat file, depending on the os.
+     */
+    private fun filePath():String {
+        val os = System.getProperty("os.name").toLowerCase()
+        val user = System.getProperty("user.name")
+        if (os.contains("windows")) {
+            return "C:\\tetris\\game.dat"
+        }
+        if (os.contains("linux")) {
+            return "home/$user/tetris/game.dat"
+        }
+        if (os.contains("mac")) {
+            return "/Users/$user/tetris/game.dat"
+        }
+        throw RuntimeException("Unsupported OS")
+    }
 }

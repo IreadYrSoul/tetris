@@ -11,6 +11,6 @@ class ModelTest {
 
     @Test
     fun testLeft() {
-        val model = Model(w, h, any())
+
     }
 }

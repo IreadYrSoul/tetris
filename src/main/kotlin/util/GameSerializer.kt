@@ -2,10 +2,9 @@ package util
 
 import input.Input
 import model.*
-import model.Type.*
-import model.Color.*
 import java.io.File
-import java.lang.IllegalArgumentException
+import model.NodeColor.*
+import model.Type.*
 import config.Configuration.filePath as path
 
 /**
@@ -31,7 +30,7 @@ object GameSerializer {
             it.print("\n\n")
             //write shape
             it.print("[Shape]\n")
-            it.print("type=${model.shape.type.getCode()} color=${model.shape.color.getCode()}\n")
+            it.print("type=${model.shape.type.code} nodeColor=${model.shape.nodeColor.code}\n")
             it.print(createLine(model.shape.body.toList()))
             it.print("\n\n")
             //write model
@@ -83,7 +82,7 @@ object GameSerializer {
             val codes = code.split(" ")
             list.add(Node(codes[1].toInt(), codes[0].toInt(), getColor(codes[2])))
         }
-        val shape = Shape(getType(type), getColor(color), list.toTypedArray())
+        val shape = Shape(getType(type), getColor(color), Level.LEVEL_1, list.toTypedArray())
         //read model.
         val width = lines[modelIndex].split(" ")[0]
         val height = lines[modelIndex].split(" ")[1]
@@ -109,9 +108,9 @@ object GameSerializer {
     }
 
     /**
-     * Get Color of Node by string code.
+     * Get NodeColor of Node by string code.
      */
-    private fun getColor(code:String): model.Color {
+    private fun getColor(code:String): model.NodeColor {
         when(code) {
             "R" -> return RED
             "G" -> return GREEN
@@ -150,7 +149,7 @@ object GameSerializer {
         for (i in nodes.indices) {
             n = nodes[i]
             if (i < nodes.size -1) {
-                builder.append((n?.serialize() ?: "N" )+ "-")
+                builder.append((n?.serialize() ?: "N" ) + "-")
             } else {
                 builder.append((n?.serialize() ?: "N"))
             }

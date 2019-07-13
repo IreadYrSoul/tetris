@@ -2,6 +2,7 @@ package util
 
 import model.*
 import model.Type.*
+import java.awt.Color
 import java.awt.Font
 import java.awt.Graphics
 
@@ -12,7 +13,7 @@ import config.Configuration.displayWidth as dW
 /**
  * Represents stats data (next Shape and completed Lines).
  */
-class Stats (var type: Type, var color: Color) {
+class Stats(var type: Type, var color: NodeColor) {
 
     /**
      * Frame rate.
@@ -22,99 +23,87 @@ class Stats (var type: Type, var color: Color) {
     /**
      * Body of next Shape.
      */
-    private var nextShape:Array<Node?>
+    private var nextShape: Array<Node?>
 
     /**
      * Base X coordinate for stat Node.
      */
-    val x = 120
+    private val x = 120
 
     /**
      * Base Y coordinate for stat Node.
      */
-    val y = 10
+    private val y = 10
 
     init {
-       nextShape = fill(type, color)
+        nextShape = fill(type, color)
     }
 
     /**
      * Update frame rate (FPS).
      */
-    fun update(t: Type, c: Color) {
+    fun update(t: Type, c: NodeColor) {
         frameRate.calculate()
         if (type != t || color != c) {
             nextShape = fill(t, c)
         }
-
     }
 
     /**
      * Generate Shape body for static rendering of stats panel.
      */
-    private fun fill(t: Type, c: Color): Array<Node?> {
-        val body = arrayListOf<Node>()
-        when(t) {
-            I -> {
-                body.add(Node(x - 10, y + 10, c, true))
-                body.add(Node(x + 10, y + 10, c, true))
-                body.add(Node(x + 30, y + 10, c, true))
-                body.add(Node(x + 50, y + 10, c, true))
-            }
-            O -> {
-                body.add(Node(x + 10, y, c, true))
-                body.add(Node(x + 10, y + 20, c, true))
-                body.add(Node(x + 30, y, c, true))
-                body.add(Node(x + 30, y + 20, c, true))
-            }
-            T -> {
-                body.add(Node(x, y, c, true))
-                body.add(Node(x + 20, y, c, true))
-                body.add(Node(x + 40, y, c, true))
-                body.add(Node(x + 20, y + 20, c, true))
-            }
-            Z -> {
-                body.add(Node(x, y, c, true))
-                body.add(Node(x + 20, y, c, true))
-                body.add(Node(x + 20, y + 20, c, true))
-                body.add(Node(x + 40, y + 20, c, true))
-            }
-            S -> {
-                body.add(Node(x + 20, y, c, true))
-                body.add(Node(x + 40, y, c, true))
-                body.add(Node(x, y + 20, c, true))
-                body.add(Node(x + 20, y + 20, c, true))
-            }
-            J -> {
-                body.add(Node(x, y, c, true))
-                body.add(Node(x, y + 20, c, true))
-                body.add(Node(x + 20, y + 20, c, true))
-                body.add(Node(x + 40, y + 20, c, true))
-            }
-            L -> {
-                body.add(Node(x + 40, y, c, true))
-                body.add(Node(x, y + 20, c, true))
-                body.add(Node(x + 20, y + 20, c, true))
-                body.add(Node(x + 40, y + 20, c, true))
-            }
+    private fun fill(t: Type, c: NodeColor): Array<Node?> {
+        return when (t) {
+            I -> arrayOf(Node(x - 10, y + 10, c, true),
+                    Node(x + 10, y + 10, c, true),
+                    Node(x + 30, y + 10, c, true),
+                    Node(x + 50, y + 10, c, true))
+            O -> arrayOf(Node(x + 10, y, c, true),
+                    Node(x + 10, y + 20, c, true),
+                    Node(x + 30, y, c, true),
+                    Node(x + 30, y + 20, c, true))
+            T -> arrayOf(Node(x, y, c, true),
+                    Node(x + 20, y, c, true),
+                    Node(x + 40, y, c, true),
+                    Node(x + 20, y + 20, c, true))
+            Z -> arrayOf(Node(x, y, c, true),
+                    Node(x + 20, y, c, true),
+                    Node(x + 20, y + 20, c, true),
+                    Node(x + 40, y + 20, c, true))
+            S -> arrayOf(Node(x + 20, y, c, true),
+                    Node(x + 40, y, c, true),
+                    Node(x, y + 20, c, true),
+                    Node(x + 20, y + 20, c, true))
+            J -> arrayOf(Node(x, y, c, true),
+                    Node(x, y + 20, c, true),
+                    Node(x + 20, y + 20, c, true),
+                    Node(x + 40, y + 20, c, true))
+            L -> arrayOf(Node(x + 40, y, c, true),
+                    Node(x, y + 20, c, true),
+                    Node(x + 20, y + 20, c, true),
+                    Node(x + 40, y + 20, c, true))
         }
-        return body.toTypedArray()
     }
 
     /**
      * Render stats.
      */
-    fun render(g: Graphics, l: Lines) {
+    fun render(g: Graphics, l: Lines, lvl: Level) {
         g.color = java.awt.Color.WHITE
         g.fillRect(0, 0, dW, sH + gH)
         g.color = java.awt.Color.BLACK
         g.fillRect(0, 0, (dW / 2) - 1, sH - 2)
         g.fillRect((dW / 2) + 1, 0, (dW / 2) - 1, sH - 2)
-        g.fillRect(0,  sH, dW, gH)
+        g.fillRect(0, sH, dW, gH)
         g.color = java.awt.Color.WHITE
         g.font = Font("Arial", Font.BOLD, 20)
-        g.drawString("LINES", 18, 25)
-        g.drawString(l.get(), 30, 50)
+        g.drawString("LINES", 20, 25)
+        g.drawString(l.get(), 32, 50)
+        g.color = Color(126, 214, 223)
+        g.font = Font("Arial", Font.BOLD, 10)
+        g.drawString(lvl.code, 30, 70)
+        g.color = Color(106, 176, 76)
+        g.drawString(frameRate.rate, 132, 70)
         nextShape.forEach { it!!.render(g) }
     }
 }

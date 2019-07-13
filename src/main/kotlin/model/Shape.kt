@@ -11,7 +11,7 @@ import kotlin.collections.ArrayList
 /**
  * Represents Tetris shape.
  */
-class Shape(var type: Type, var color: Color) {
+class Shape(var type: Type, var nodeColor: NodeColor, var level:Level) {
 
     /**
      * The body of Shape (4 Nodes).
@@ -63,10 +63,10 @@ class Shape(var type: Type, var color: Color) {
      */
     private lateinit var timer: Timer
 
-    constructor (type:Type, color: Color, body:Array<Node>) : this(type, color) {
+    constructor (type:Type, nodeColor: NodeColor, level: Level, body:Array<Node>) : this(type, nodeColor, level) {
         this.body = body
         this.type = type
-        this.color = color
+        this.nodeColor = nodeColor
     }
 
     init {
@@ -84,52 +84,15 @@ class Shape(var type: Type, var color: Color) {
      * Create Shape body.
      */
     private fun fill(): Array<Node> {
-        val body = arrayListOf<Node>()
-        when (type) {
-            I -> {
-                body.add(Node(5, 1, color))
-                body.add(Node(5, 0, color))
-                body.add(Node(5, 2, color))
-                body.add(Node(5, 3, color))
-            }
-            O -> {
-                body.add(Node(5, 0, color))
-                body.add(Node(6, 0, color))
-                body.add(Node(5, 1, color))
-                body.add(Node(6, 1, color))
-            }
-            T -> {
-                body.add(Node(5, 0, color))
-                body.add(Node(5, 1, color))
-                body.add(Node(4, 0, color))
-                body.add(Node(6, 0, color))
-            }
-            Z -> {
-                body.add(Node(5, 0, color))
-                body.add(Node(4, 0, color))
-                body.add(Node(5, 1, color))
-                body.add(Node(6, 1, color))
-            }
-            S -> {
-                body.add(Node(5, 0, color))
-                body.add(Node(6, 0, color))
-                body.add(Node(4, 1, color))
-                body.add(Node(5, 1, color))
-            }
-            J -> {
-                body.add(Node(5, 0, color))
-                body.add(Node(4, 0, color))
-                body.add(Node(6, 0, color))
-                body.add(Node(6, 1, color))
-            }
-            L -> {
-                body.add(Node(5, 0, color))
-                body.add(Node(4, 0, color))
-                body.add(Node(6, 0, color))
-                body.add(Node(4, 1, color))
-            }
+        return when (type) {
+            I -> arrayOf(Node(5, 1, nodeColor), Node(5, 0, nodeColor), Node(5, 2, nodeColor), Node(5, 3, nodeColor))
+            O -> arrayOf(Node(5, 0, nodeColor), Node(6, 0, nodeColor), Node(5, 1, nodeColor), Node(6, 1, nodeColor))
+            T -> arrayOf(Node(5, 0, nodeColor), Node(5, 1, nodeColor), Node(4, 0, nodeColor), Node(6, 0, nodeColor))
+            Z -> arrayOf(Node(5, 0, nodeColor), Node(4, 0, nodeColor), Node(5, 1, nodeColor), Node(6, 1, nodeColor))
+            S -> arrayOf(Node(5, 0, nodeColor), Node(6, 0, nodeColor), Node(4, 1, nodeColor), Node(5, 1, nodeColor))
+            J -> arrayOf(Node(5, 0, nodeColor), Node(4, 0, nodeColor), Node(6, 0, nodeColor), Node(6, 1, nodeColor))
+            L -> arrayOf(Node(5, 0, nodeColor), Node(4, 0, nodeColor), Node(6, 0, nodeColor), Node(4, 1, nodeColor))
         }
-        return body.toTypedArray()
     }
 
     /**
@@ -156,7 +119,7 @@ class Shape(var type: Type, var color: Color) {
                 down()
             }
         }
-        this.timer.schedule(task, 0, 750)
+        this.timer.schedule(task, 0, level.value)
     }
 
     /**
@@ -232,7 +195,7 @@ class Shape(var type: Type, var color: Color) {
     /**
      * Get max X of Shape.
      */
-    fun maxX(): Int {
+    private fun maxX(): Int {
         maxX = body[0].x
         for (n in body) {
             if (n.x > maxX) {
@@ -245,7 +208,7 @@ class Shape(var type: Type, var color: Color) {
     /**
      * Get min X of Shape.
      */
-    fun minX(): Int {
+    private fun minX(): Int {
         minX = body[0].x
         for (n in body) {
             if (n.x < minX) {
@@ -258,7 +221,7 @@ class Shape(var type: Type, var color: Color) {
     /**
      * Get max Y of Shape.
      */
-    fun maxY(): Int {
+    private fun maxY(): Int {
         maxY = body[0].y
         for (n in body) {
             if (n.y > maxY) {
@@ -271,7 +234,7 @@ class Shape(var type: Type, var color: Color) {
     /**
      * Get min Y of Shape.
      */
-    fun minY(): Int {
+    private fun minY(): Int {
         minY = body[0].y
         for (n in body) {
             if (n.y < minY) {

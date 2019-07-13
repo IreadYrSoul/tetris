@@ -4,6 +4,7 @@ import input.Input
 import java.awt.Graphics
 import java.util.*
 import model.State.NOT_ACTIVE
+import model.Level.LEVEL_1
 import util.GameSerializer
 import java.awt.event.KeyEvent
 import config.Configuration.width as w
@@ -51,18 +52,25 @@ class Model(val w: Int, val h: Int, private val input: Input) {
     /**
      * Color of next Shape.
      */
-    lateinit var nextColor: Color
+    lateinit var nextColor: NodeColor
+
+    /**
+     * Level (velocity) of game.
+     */
+    var level: Level
 
     /**
      * Amount of completed lines.
      */
-    var lines = Lines
+    var lines:Lines
 
     init {
         nodes = 0
         isPaused = false
         state = true
         initNextShape()
+        level = LEVEL_1
+        lines = Lines
         shape = randomShape()
         shadow = Array(4) { null }
         for (i in shape.body.indices) {
@@ -140,6 +148,7 @@ class Model(val w: Int, val h: Int, private val input: Input) {
             }
             shape.active = false
             newShape()
+            checkLine()
             input.map[KeyEvent.VK_SPACE] = false
         }
         updateShadow()
@@ -202,7 +211,7 @@ class Model(val w: Int, val h: Int, private val input: Input) {
             array[n.y][n.x] = n
             nodes++
         }
-        shape = Shape(nextType, nextColor)
+        shape = Shape(nextType, nextColor, level)
         initNextShape()
     }
 
@@ -233,6 +242,9 @@ class Model(val w: Int, val h: Int, private val input: Input) {
                 }
             }
             lines.inc()
+            if (lines.get().toInt() % 20 == 0) {
+                level++
+            }
             checkLine()
         }
     }
@@ -253,12 +265,11 @@ class Model(val w: Int, val h: Int, private val input: Input) {
         }
     }
 
+    /**
+     * Save game (Model, Shape, Lines, Level) to file.
+     */
     fun saveToFile() {
         GameSerializer.write(this)
-    }
-
-    fun loadFromFile() {
-
     }
 
     /**
@@ -266,9 +277,9 @@ class Model(val w: Int, val h: Int, private val input: Input) {
      */
     private fun randomShape(): Shape {
         val types = Type.values()
-        val colors = Color.values()
+        val colors = NodeColor.values()
         val random = Random()
-        return Shape(types[random.nextInt(types.size)], colors[random.nextInt(colors.size)])
+        return Shape(types[random.nextInt(types.size)], colors[random.nextInt(colors.size)], level)
     }
 
     /**
@@ -276,7 +287,7 @@ class Model(val w: Int, val h: Int, private val input: Input) {
      */
     private fun initNextShape() {
         val types = Type.values()
-        val colors = Color.values()
+        val colors = NodeColor.values()
         val random = Random()
         nextType = types[random.nextInt(types.size)]
         nextColor = colors[random.nextInt(colors.size)]

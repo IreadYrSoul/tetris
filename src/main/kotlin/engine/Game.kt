@@ -22,7 +22,7 @@ import config.Configuration.width as w
 /**
  * The game engine.
  */
-class Game: Runnable {
+class Game : Runnable {
 
     val updateRate = 60.0f
     val updateInterval = second / updateRate
@@ -36,32 +36,30 @@ class Game: Runnable {
     lateinit var g: Graphics
     lateinit var gameThread: Thread
 
-    private val keys:Input
-    private val model:Model
-    private val stats:Stats
+    private val keys: Input
+    private val model: Model
+    private val stats: Stats
 
     init {
         keys = Input()
-        val game = GameSerializer.read(keys)
-        if (game == null) {
-            model = Model(w, h, keys)
-        } else {
-            model = game
-        }
+        model = GameSerializer.read(keys) ?: Model(w, h, keys)
         stats = Stats(model.nextType, model.nextColor)
     }
 
+    /**
+     * Create and configure display frame.
+     */
     private fun createAndShowGui() {
         display = Display(keys)
         display.create(clearColor)
         g = display.getGraphics()
 
-        display.exitMenuItem.addActionListener { e -> shutDown()}
+        display.exitMenuItem.addActionListener { shutDown() }
 
-        display.window.addWindowListener(object: WindowAdapter() {
+        display.window.addWindowListener(object : WindowAdapter() {
             override fun windowClosing(e: WindowEvent?) {
                 when (JOptionPane.showConfirmDialog(display.window, "Close with saving?", "Exit Game", JOptionPane.YES_NO_OPTION)) {
-                    JOptionPane.YES_OPTION ->  model.saveToFile()
+                    JOptionPane.YES_OPTION -> model.saveToFile()
                     JOptionPane.NO_OPTION -> println("without saving...")
                 }
                 display.window.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
@@ -82,9 +80,7 @@ class Game: Runnable {
      */
     private fun render() {
         display.clear()
-        //render stats.
-        stats.render(g, model.lines)
-        //render shape + model nodes.
+        stats.render(g, model.lines, model.level)
         model.render(g)
         display.swapBuffers()
     }
@@ -153,6 +149,7 @@ class Game: Runnable {
         }
         running = true
         gameThread = Thread(this)
+        gameThread.name = "gameThread"
         gameThread.start()
     }
 }

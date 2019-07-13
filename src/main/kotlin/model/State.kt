@@ -6,12 +6,12 @@ package model
 enum class State {
 
     /**
-     * Active node (in model.Shape)
+     * Active node (part of Shape).
      */
     ACTIVE,
 
     /**
-     * Not active node (static body of field)
+     * Not active node (part of Model array).
      */
     NOT_ACTIVE
 

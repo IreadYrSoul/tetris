@@ -11,10 +11,11 @@ import config.Configuration.statDisplayHeight as sh
 
 /**
  * Represents the cell of game field.
+ * Building block of Shape and Model.
  */
 class Node(var x: Int,
            var y: Int,
-           private val color: model.Color,
+           private val color: NodeColor,
            private val stats:Boolean = false) {
 
     /**
@@ -43,11 +44,11 @@ class Node(var x: Int,
                 val t = x
                 x = a.x + (a.y - y)
                 y = a.y + (t - a.x)
-            } else { // y == a.y
+            } else {
                 y = a.y + (x - a.x)
                 x = a.x
             }
-        } else { // x < a.x
+        } else {
             if (y > a.y) {
                 val t = x
                 x = a.x - (y - a.y)
@@ -56,7 +57,7 @@ class Node(var x: Int,
                 val t = x
                 x = a.x + (a.y - y)
                 y = a.y - (a.x - t)
-            } else { // y == a.y
+            } else {
                 y = a.y - (a.x - x)
                 x = a.x
             }
@@ -92,11 +93,11 @@ class Node(var x: Int,
         g.color = Color.BLACK
         if (!stats) {
             g.fillRect(x * n, (y + (sh / n)) * n, n, n)
-            g.color = color.get()
+            g.color = color.value
             g.fill(RoundRectangle2D.Float(((x * n) + 1).toFloat(), (((y + (sh / n)) * n) + 1).toFloat(), 18.0F, 18.0F, 3.0F, 3.0F))
         } else {
             g.fillRect(x, y, n, n)
-            g.color = color.get()
+            g.color = color.value
             g.fill(RoundRectangle2D.Float((x + 1).toFloat(), (y + 1).toFloat(), 18.0F, 18.0F, 3.0F, 3.0F))
         }
         g.composite = AlphaComposite.SrcAtop
@@ -118,5 +119,8 @@ class Node(var x: Int,
      */
     fun clone() = Node(this.x, this.y, this.color)
 
-    fun serialize() = if (state == ACTIVE) "$y $x ${color.getCode()}" else color.getCode()
+    /**
+     * Serialize Node to string.
+     */
+    fun serialize() = if (state == ACTIVE) "$y $x ${color.code}" else color.code
 }

@@ -4,59 +4,47 @@ package model
 /**
  * Represents the type of tetris shape.
  */
-enum class Type {
+enum class Type (val code: String) {
 
     /**  _ _
      *  |_|_|
      *  |_|_|
      */
-    O,
+    O("O"),
 
     /**  _ _
      *  |_|_|_
      *    |_|_|
      */
-    Z,
+    Z("Z"),
 
     /**    _ _
      *   _|_|_|
      *  |_|_|
      */
-    S,
+    S("S"),
 
     /**  _ _ _ _
      *  |_|_|_|_|
      */
-    I,
+    I("I"),
 
     /**  _ _ _
      *  |_|_|_|
      *    |_|
      */
-    T,
+    T("T"),
 
     /**  _
      *  |_|_ _
      *  |_|_|_|
      */
-    J,
+    J("J"),
 
     /**  _ _ _
      *  |_|_|_|
      *  |_|
      */
-    L;
+    L("L")
 
-    fun getCode(): String {
-        when (this) {
-            O -> return "O"
-            T -> return "T"
-            Z -> return "Z"
-            S -> return "S"
-            I -> return "I"
-            T -> return "T"
-            J -> return "J"
-            L -> return "L"
-        }
-    }
 }

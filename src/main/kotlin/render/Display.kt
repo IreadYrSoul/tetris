@@ -11,13 +11,10 @@ import config.Configuration.logo
 import input.Input
 import java.awt.*
 import java.awt.event.KeyEvent
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferInt
 import java.util.*
 import javax.swing.*
-import javax.swing.WindowConstants.EXIT_ON_CLOSE
 
 
 /**
