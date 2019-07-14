@@ -39,6 +39,11 @@ class Shape(var type: Type, var nodeColor: NodeColor, var level:Level) {
     var right = true
 
     /**
+     * If the game on paused.
+     */
+    var isPaused = false
+
+    /**
      * Min X of Shape.
      */
     private var minX: Int
@@ -100,6 +105,7 @@ class Shape(var type: Type, var nodeColor: NodeColor, var level:Level) {
      */
     fun pause() {
         this.timer.cancel()
+        isPaused = true
     }
 
     /**
@@ -107,6 +113,7 @@ class Shape(var type: Type, var nodeColor: NodeColor, var level:Level) {
      */
     fun resume() {
         fall()
+        isPaused = false
     }
 
     /**

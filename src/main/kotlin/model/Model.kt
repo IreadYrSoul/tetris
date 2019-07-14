@@ -6,6 +6,9 @@ import java.util.*
 import model.State.NOT_ACTIVE
 import model.Level.LEVEL_1
 import util.GameSerializer
+import java.awt.Color
+import java.awt.Font
+import java.awt.Graphics2D
 import java.awt.event.KeyEvent
 import config.Configuration.width as w
 
@@ -62,9 +65,15 @@ class Model(val w: Int, val h: Int, private val input: Input) {
     /**
      * Amount of completed lines.
      */
-    var lines:Lines
+    var lines: Lines
+
+    /**
+     * The game is over.
+     */
+    var gameOver: Boolean
 
     init {
+        gameOver = false
         nodes = 0
         isPaused = false
         state = true
@@ -82,6 +91,9 @@ class Model(val w: Int, val h: Int, private val input: Input) {
      * Update process of game field.
      */
     fun update() {
+        if (gameOver) {
+            return
+        }
         for (n in shape.body) {
             shape.right = !(n.x < w - 1 && array[n.y][n.x + 1] != null)
             if (!shape.right) break
@@ -94,7 +106,9 @@ class Model(val w: Int, val h: Int, private val input: Input) {
         }
         state = shape.active
         if (!state) {
-            newShape()
+            if (!gameOver) {
+                newShape()
+            }
             checkLine()
         }
     }
@@ -132,7 +146,7 @@ class Model(val w: Int, val h: Int, private val input: Input) {
         if (input.getKey(KeyEvent.VK_SPACE) && !isPaused) {
             while (shape.active) {
                 shape.down()
-                if (nodes != 0) {
+                if (nodes != 0 && !gameOver) {
                     for (n in shape.body) {
                         if (n.y < array.size - 1) {
                             if (array[n.y + 1][n.x] != null) {
@@ -147,7 +161,9 @@ class Model(val w: Int, val h: Int, private val input: Input) {
                 }
             }
             shape.active = false
-            newShape()
+            if (!gameOver) {
+                newShape()
+            }
             checkLine()
             input.map[KeyEvent.VK_SPACE] = false
         }
@@ -193,8 +209,13 @@ class Model(val w: Int, val h: Int, private val input: Input) {
         for (n in shape.body) {
             if (n.y < array.size - 1) {
                 if (array[n.y + 1][n.x] != null) {
+                    if (n.y == 1) {
+                        gameOver = true
+                    }
                     shape.active = false
-                    newShape()
+                    if (!gameOver) {
+                        newShape()
+                    }
                     checkLine()
                     break
                 }
@@ -254,8 +275,13 @@ class Model(val w: Int, val h: Int, private val input: Input) {
      * Render game field (Shape + all not active Nodes).
      */
     fun render(g: Graphics) {
+        if (!gameOver) {
+            renderShadow(g)
+        }
         shape.render(g)
-        renderShadow(g)
+        if (shape.isPaused) {
+            pauseRender(g)
+        }
         for (y in array.size - 1 downTo 0) {
             for (x in array[y].size - 1 downTo 0) {
                 if (array[y][x] != null) {
@@ -291,5 +317,19 @@ class Model(val w: Int, val h: Int, private val input: Input) {
         val random = Random()
         nextType = types[random.nextInt(types.size)]
         nextColor = colors[random.nextInt(colors.size)]
+    }
+
+    /**
+     * Render frame which say that Game is paused.
+     */
+    private fun pauseRender(g: Graphics) {
+        g as Graphics2D
+        g.color = Color.WHITE
+        g.fillRect(20, 240, 160, 60)
+        g.color = Color.BLACK
+        g.fillRect(22, 242, 156, 56)
+        g.color = Color.WHITE
+        g.font = Font("Arial", Font.BOLD, 16)
+        g.drawString("PAUSE", 73, 275)
     }
 }
