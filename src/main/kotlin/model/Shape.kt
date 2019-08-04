@@ -11,7 +11,7 @@ import kotlin.collections.ArrayList
 /**
  * Represents Tetris shape.
  */
-class Shape(var type: Type, var nodeColor: NodeColor, var level:Level) {
+class Shape(var type: Type, var nodeColor: NodeColor, var level: Level) {
 
     /**
      * The body of Shape (4 Nodes).
@@ -27,6 +27,11 @@ class Shape(var type: Type, var nodeColor: NodeColor, var level:Level) {
      * Able to move down.
      */
     var active: Boolean
+
+    /**
+     * If collision has happened
+     */
+    var isCollision: Boolean
 
     /**
      * Able to move left
@@ -66,15 +71,17 @@ class Shape(var type: Type, var nodeColor: NodeColor, var level:Level) {
     /**
      * Moving down timer.
      */
-    private lateinit var timer: Timer
+    lateinit var timer: Timer
 
-    constructor (type:Type, nodeColor: NodeColor, level: Level, body:Array<Node>) : this(type, nodeColor, level) {
+    constructor (type: Type, nodeColor: NodeColor, level: Level, body: Array<Node>) : this(type, nodeColor, level) {
         this.body = body
         this.type = type
         this.nodeColor = nodeColor
+        this.active = true
     }
 
     init {
+        isCollision = false
         active = true
         body = fill()
         cpBody = ArrayList()
@@ -126,7 +133,7 @@ class Shape(var type: Type, var nodeColor: NodeColor, var level:Level) {
                 down()
             }
         }
-        this.timer.schedule(task, 0, level.value)
+        this.timer.schedule(task, 500, level.value)
     }
 
     /**
@@ -135,7 +142,7 @@ class Shape(var type: Type, var nodeColor: NodeColor, var level:Level) {
     fun left() {
         if (left) {
             right = true
-            if (active && minX > 0) {
+            if (minX > 0) {
                 body.forEach { it.left() }
             }
             minX = minX()
@@ -148,7 +155,7 @@ class Shape(var type: Type, var nodeColor: NodeColor, var level:Level) {
     fun right() {
         if (right) {
             left = true
-            if (active && maxX < w - 1) {
+            if (maxX < w - 1) {
                 body.forEach { it.right() }
             }
             maxX = maxX()
@@ -159,7 +166,7 @@ class Shape(var type: Type, var nodeColor: NodeColor, var level:Level) {
      * Moves Shape to down.
      */
     fun down() {
-        if (active && maxY < h - 1) {
+        if (!isCollision && (active && maxY < h - 1)) {
             body.forEach { it.down() }
         } else {
             active = false

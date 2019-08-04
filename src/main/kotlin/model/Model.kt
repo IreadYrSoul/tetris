@@ -10,7 +10,7 @@ import java.awt.Color
 import java.awt.Font
 import java.awt.Graphics2D
 import java.awt.event.KeyEvent
-import config.Configuration.width as w
+
 
 /**
  * Represents model of game field.
@@ -94,15 +94,12 @@ class Model(val w: Int, val h: Int, private val input: Input) {
         if (gameOver) {
             return
         }
-        for (n in shape.body) {
-            shape.right = !(n.x < w - 1 && array[n.y][n.x + 1] != null)
-            if (!shape.right) break
-            shape.left = !(n.x > 0 && array[n.y][n.x - 1] != null)
-            if (!shape.right) break
-        }
         input(input)
         if (nodes != 0) {
-            collisCheck()
+            checkCollisions()
+            if (gameOver) {
+                return
+            }
         }
         state = shape.active
         if (!state) {
@@ -117,22 +114,106 @@ class Model(val w: Int, val h: Int, private val input: Input) {
      * Handles Shape action.
      */
     private fun input(input: Input) {
+        moveLeft(input)
+        moveRight(input)
+        moveDown(input)
+        rotate(input)
+        pause(input)
+        moveInstantDown(input)
+        updateShadow()
+    }
+
+    /**
+     * Generate thr "Shadow" of Shape.
+     * Shows the place where the Shape will be installed,
+     * if Shape will be move same.
+     */
+    private fun updateShadow() {
+        for (i in shape.body.indices) {
+            shadow[i] = shape.body[i].clone()
+        }
+        var a = true
+        while (a) {
+            for (n in shadow) {
+                if (n!!.y < h - 1) {
+                    n.down()
+                }
+                if (nodes == 0) {
+                    if (n.y == h - 1) {
+                        a = false
+                    }
+                } else {
+                    if (n.y == h - 1 || array[n.y + 1][n.x] != null) a = false
+                }
+            }
+            if (!a) break
+        }
+    }
+
+    /**
+     * Handle keyboard click event for ' <-- ' key.
+     */
+    private fun moveLeft(input: Input) {
         if (input.getKey(KeyEvent.VK_LEFT) && !isPaused) {
-            shape.left()
+            for (n in shape.body) {
+                if ((n.x > 0 && array[n.y][n.x - 1] != null)) {
+                    shape.left = false
+                    break
+                }
+            }
+            if (shape.left) {
+                shape.left()
+            }
+            shape.left = true
             input.map[KeyEvent.VK_LEFT] = false
         }
+    }
+
+    /**
+     * Handle keyboard click event for ' --> ' key.
+     */
+    private fun moveRight(input: Input) {
         if (input.getKey(KeyEvent.VK_RIGHT) && !isPaused) {
-            shape.right()
+            for (n in shape.body) {
+                if ((n.x < w - 1 && array[n.y][n.x + 1] != null)) {
+                    shape.right = false
+                    break
+                }
+            }
+            if (shape.right) {
+                shape.right()
+            }
+            shape.right = true
             input.map[KeyEvent.VK_RIGHT] = false
         }
+    }
+
+    /**
+     * Handle keyboard click event for ' | ' key.
+     *                                   v
+     */
+    private fun moveDown(input: Input) {
         if (input.getKey(KeyEvent.VK_DOWN) && !isPaused) {
             shape.down()
             input.map[KeyEvent.VK_DOWN] = false
         }
+    }
+
+    /**
+     *                                   ^
+     * Handle keyboard click event for ' | ' key.
+     */
+    private fun rotate(input: Input) {
         if (input.getKey(KeyEvent.VK_UP) && !isPaused) {
             shape.rotate(array)
             input.map[KeyEvent.VK_UP] = false
         }
+    }
+
+    /**
+     * Handle keyboard click event for ' P ' key.
+     */
+    private fun pause(input: Input) {
         if (input.getKey(KeyEvent.VK_P)) {
             if (!isPaused) {
                 isPaused = true
@@ -143,6 +224,12 @@ class Model(val w: Int, val h: Int, private val input: Input) {
             }
             input.map[KeyEvent.VK_P] = false
         }
+    }
+
+    /**
+     * Handle keyboard click event for ' SPACE ' key.
+     */
+    private fun moveInstantDown(input: Input) {
         if (input.getKey(KeyEvent.VK_SPACE) && !isPaused) {
             while (shape.active) {
                 shape.down()
@@ -167,32 +254,6 @@ class Model(val w: Int, val h: Int, private val input: Input) {
             checkLine()
             input.map[KeyEvent.VK_SPACE] = false
         }
-        updateShadow()
-    }
-
-    /**
-     * Generate thr "Shadow" of Shape.
-     * Shows the place where the Shape will be installed,
-     * if Shape will be move same.
-     */
-    private fun updateShadow() {
-        for (i in shape.body.indices) {
-            shadow[i] = shape.body[i].clone()
-        }
-        var a = true
-        while (a) {
-            for (n in shadow) {
-                n!!.down()
-                if (nodes == 0) {
-                    if (n.y == h - 1) {
-                        a = false
-                    }
-                } else {
-                    if (n.y == h - 1 || (n.y < h - 1 && array[n.y + 1][n.x] != null)) a = false
-                }
-            }
-            if (!a) return
-        }
     }
 
     /**
@@ -205,19 +266,15 @@ class Model(val w: Int, val h: Int, private val input: Input) {
     /**
      * Check for vertically collisions.
      */
-    private fun collisCheck() {
+    private fun checkCollisions() {
         for (n in shape.body) {
             if (n.y < array.size - 1) {
                 if (array[n.y + 1][n.x] != null) {
                     if (n.y == 1) {
                         gameOver = true
                     }
-                    shape.active = false
-                    if (!gameOver) {
-                        newShape()
-                    }
-                    checkLine()
-                    break
+                    shape.isCollision = true
+                    return
                 }
             }
         }
@@ -232,6 +289,7 @@ class Model(val w: Int, val h: Int, private val input: Input) {
             array[n.y][n.x] = n
             nodes++
         }
+        shape.timer.cancel()
         shape = Shape(nextType, nextColor, level)
         initNextShape()
     }
@@ -279,15 +337,18 @@ class Model(val w: Int, val h: Int, private val input: Input) {
             renderShadow(g)
         }
         shape.render(g)
-        if (shape.isPaused) {
-            pauseRender(g)
-        }
         for (y in array.size - 1 downTo 0) {
             for (x in array[y].size - 1 downTo 0) {
                 if (array[y][x] != null) {
                     array[y][x]!!.render(g)
                 }
             }
+        }
+        if (shape.isPaused) {
+            gameStateRender(g, "pause")
+        }
+        if (gameOver) {
+            gameStateRender(g, "game over")
         }
     }
 
@@ -320,9 +381,9 @@ class Model(val w: Int, val h: Int, private val input: Input) {
     }
 
     /**
-     * Render frame which say that Game is paused.
+     * Render frame which say that Game is paused or Game is over.
      */
-    private fun pauseRender(g: Graphics) {
+    private fun gameStateRender(g: Graphics, m: String) {
         g as Graphics2D
         g.color = Color.WHITE
         g.fillRect(20, 240, 160, 60)
@@ -330,6 +391,6 @@ class Model(val w: Int, val h: Int, private val input: Input) {
         g.fillRect(22, 242, 156, 56)
         g.color = Color.WHITE
         g.font = Font("Arial", Font.BOLD, 16)
-        g.drawString("PAUSE", 73, 275)
+        if (m == "pause") g.drawString(m.toUpperCase(), 73, 275) else g.drawString(m.toUpperCase(), 45, 275)
     }
 }

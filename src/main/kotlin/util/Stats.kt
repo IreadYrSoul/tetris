@@ -89,13 +89,13 @@ class Stats(var type: Type, var color: NodeColor) {
      * Render stats.
      */
     fun render(g: Graphics, l: Lines, lvl: Level) {
-        g.color = java.awt.Color.WHITE
+        g.color = Color.WHITE
         g.fillRect(0, 0, dW, sH + gH)
-        g.color = java.awt.Color.BLACK
+        g.color = Color.BLACK
         g.fillRect(0, 0, (dW / 2) - 1, sH - 2)
         g.fillRect((dW / 2) + 1, 0, (dW / 2) - 1, sH - 2)
         g.fillRect(0, sH, dW, gH)
-        g.color = java.awt.Color.WHITE
+        g.color = Color.WHITE
         g.font = Font("Arial", Font.BOLD, 20)
         g.drawString("LINES", 20, 25)
         g.drawString(l.get(), 32, 50)

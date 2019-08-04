@@ -94,11 +94,11 @@ class Node(var x: Int,
         if (!stats) {
             g.fillRect(x * n, (y + (sh / n)) * n, n, n)
             g.color = color.value
-            g.fill(RoundRectangle2D.Float(((x * n) + 1).toFloat(), (((y + (sh / n)) * n) + 1).toFloat(), 18.0F, 18.0F, 3.0F, 3.0F))
+            g.fill(RoundRectangle2D.Float(((x * n) + 1).toFloat(), (((y + (sh / n)) * n) + 1).toFloat(), 18.0F, 18.0F, 6.0F, 6.0F))
         } else {
             g.fillRect(x, y, n, n)
             g.color = color.value
-            g.fill(RoundRectangle2D.Float((x + 1).toFloat(), (y + 1).toFloat(), 18.0F, 18.0F, 3.0F, 3.0F))
+            g.fill(RoundRectangle2D.Float((x + 1).toFloat(), (y + 1).toFloat(), 18.0F, 18.0F, 6.0F, 6.0F))
         }
         g.composite = AlphaComposite.SrcAtop
     }
@@ -111,7 +111,7 @@ class Node(var x: Int,
         g.color = Color.BLACK
         g.fillRect(x * n, (y + (sh / n)) * n, n, n)
         g.color = Color.WHITE
-        g.draw(RoundRectangle2D.Float(((x * n) + 1).toFloat(), (((y + (sh / n)) * n) + 1).toFloat(), 18.0F, 18.0F, 3.0F, 3.0F))
+        g.draw(RoundRectangle2D.Float(((x * n) + 1).toFloat(), (((y + (sh / n)) * n) + 1).toFloat(), 18.0F, 18.0F, 6.0F, 6.0F))
     }
 
     /**
