@@ -20,7 +20,7 @@ class Model(val w: Int, val h: Int, private val input: Input) {
     /**
      * Map that represents game field.
      */
-    var array: Array<Array<Node?>> = Array(h) { Array<Node?>(w) { null } }
+    var array: Array<Array<Node?>>
 
     /**
      * Shadow of Shape.
@@ -81,6 +81,7 @@ class Model(val w: Int, val h: Int, private val input: Input) {
         level = LEVEL_1
         lines = Lines
         shape = randomShape()
+        array = Array(h) { Array<Node?>(w) { null } }
         shadow = Array(4) { null }
         for (i in shape.body.indices) {
             shadow[i] = shape.body[i].clone()

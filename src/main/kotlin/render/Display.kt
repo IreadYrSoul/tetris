@@ -90,6 +90,11 @@ class Display(val input:Input) {
         window.setLocationRelativeTo(null)
         window.isVisible = true
 
+        new.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0)
+        load.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0)
+        scores.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0)
+        exitMenuItem.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_F5,  0)
+
         about.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0)
         about.addActionListener {
             a.location = Point(window.location.x, (window.location.y + size.height / 2) - 80)

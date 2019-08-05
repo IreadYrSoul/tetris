@@ -5,6 +5,7 @@ import model.*
 import java.io.File
 import model.NodeColor.*
 import model.Type.*
+import model.Level.*
 import config.Configuration.filePath as path
 
 /**
@@ -16,17 +17,25 @@ object GameSerializer {
      * Represents file that contains
      * info about saved game (Model).
      */
-    private val file = File(path)
+    private var file = File(path)
 
     /**
      * Save game.
      * Writes Model (game) to .dat file
      */
     fun write(model: Model) {
+        if (!file.parentFile.exists())
+            file.parentFile.mkdirs()
+        if (!file.exists())
+            file.createNewFile()
         file.printWriter().use { 
             //write lines (score).
             it.print("[Lines]\n")
             it.print(model.lines.get())
+            it.print("\n\n")
+            //write level
+            it.print("[Level]\n")
+            it.print(model.shape.level.code)
             it.print("\n\n")
             //write shape
             it.print("[Shape]\n")
@@ -49,6 +58,7 @@ object GameSerializer {
      */
     fun read(input: Input):Model? {
         var lineIndex = 0
+        var levelIndex = 0
         var shapeIndex = 0
         var modelIndex = 0
         var nodes = 0
@@ -61,6 +71,9 @@ object GameSerializer {
             if (lines[i] == "[Lines]") {
                 lineIndex = i + 1
             }
+            if (lines[i] == "[Level]") {
+                levelIndex = i + 1
+            }
             if (lines[i] == "[Shape]") {
                 shapeIndex = i + 1
             }
@@ -72,6 +85,11 @@ object GameSerializer {
         //read lines (score).
         val score = lines[lineIndex]
         Lines.points = score.toInt()
+
+        //read level.
+        val lvlCode = lines[levelIndex]
+        val level = getLevel(lvlCode)
+
         //read shape.
         val list = arrayListOf<Node>()
         val params = lines[shapeIndex].split(" ")
@@ -82,7 +100,7 @@ object GameSerializer {
             val codes = code.split(" ")
             list.add(Node(codes[1].toInt(), codes[0].toInt(), getColor(codes[2])))
         }
-        val shape = Shape(getType(type), getColor(color), Level.LEVEL_1, list.toTypedArray())
+        val shape = Shape(getType(type), getColor(color), level, list.toTypedArray())
         //read model.
         val width = lines[modelIndex].split(" ")[0]
         val height = lines[modelIndex].split(" ")[1]
@@ -110,31 +128,49 @@ object GameSerializer {
     /**
      * Get NodeColor of Node by string code.
      */
-    private fun getColor(code:String): model.NodeColor {
-        when(code) {
-            "R" -> return RED
-            "G" -> return GREEN
-            "B" -> return BLUE
-            "W" -> return WHITE
-            "V" -> return VIOLET
-            "Y" -> return YELLOW
-            "O" -> return ORANGE
-             else -> throw IllegalArgumentException()
+    private fun getColor(code:String): NodeColor {
+        return when(code) {
+            "R" -> RED
+            "G" -> GREEN
+            "B" -> BLUE
+            "W" -> WHITE
+            "V" -> VIOLET
+            "Y" -> YELLOW
+            "O" -> ORANGE
+            else -> throw IllegalArgumentException()
         }
     }
 
     /**
      * Get Type of Shape by string code.
      */
-    private fun getType(code:String):model.Type {
-        when(code) {
-            "T" -> return T
-            "O" -> return O
-            "Z" -> return Z
-            "S" -> return S
-            "I" -> return I
-            "L" -> return L
-            "J" -> return J
+    private fun getType(code:String):Type {
+        return when(code) {
+            "T" -> T
+            "O" -> O
+            "Z" -> Z
+            "S" -> S
+            "I" -> I
+            "L" -> L
+            "J" -> J
+            else -> throw IllegalArgumentException()
+        }
+    }
+
+    /**
+     * Get Level of Game (Shape) by code.
+     */
+    private fun getLevel(code: String): Level {
+        return when(code) {
+            "LEVEL 1" -> LEVEL_1
+            "LEVEL 2" -> LEVEL_2
+            "LEVEL 3" -> LEVEL_3
+            "LEVEL 4" -> LEVEL_4
+            "LEVEL 5" -> LEVEL_5
+            "LEVEL 6" -> LEVEL_6
+            "LEVEL 7" -> LEVEL_7
+            "LEVEL 8" -> LEVEL_8
+            "LEVEL 9" -> LEVEL_9
             else -> throw IllegalArgumentException()
         }
     }

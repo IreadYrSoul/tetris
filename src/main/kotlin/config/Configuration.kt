@@ -68,7 +68,7 @@ object Configuration {
             return "C:\\tetris\\game.dat"
         }
         if (os.contains("linux")) {
-            return "home/$user/tetris/game.dat"
+            return "/home/$user/tetris/game.dat"
         }
         if (os.contains("mac")) {
             return "/Users/$user/tetris/game.dat"

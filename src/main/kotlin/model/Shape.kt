@@ -78,6 +78,7 @@ class Shape(var type: Type, var nodeColor: NodeColor, var level: Level) {
         this.type = type
         this.nodeColor = nodeColor
         this.active = true
+        this.isCollision = false
     }
 
     init {
@@ -108,7 +109,7 @@ class Shape(var type: Type, var nodeColor: NodeColor, var level: Level) {
     }
 
     /**
-     * Pause the game.
+     * Pause Shape falling.
      */
     fun pause() {
         this.timer.cancel()
@@ -116,7 +117,7 @@ class Shape(var type: Type, var nodeColor: NodeColor, var level: Level) {
     }
 
     /**
-     * Resume the game.
+     * Resume Shape falling.
      */
     fun resume() {
         fall()
@@ -202,6 +203,7 @@ class Shape(var type: Type, var nodeColor: NodeColor, var level: Level) {
                 maxX = maxX()
                 maxY = maxY()
                 minY = minY()
+                break
             }
         }
     }

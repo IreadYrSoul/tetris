@@ -53,16 +53,10 @@ class Game : Runnable {
         display = Display(keys)
         display.create(clearColor)
         g = display.getGraphics()
-
-        display.exitMenuItem.addActionListener { shutDown() }
-
+        display.exitMenuItem.addActionListener { exitGame() }
         display.window.addWindowListener(object : WindowAdapter() {
             override fun windowClosing(e: WindowEvent?) {
-                when (JOptionPane.showConfirmDialog(display.window, "Close with saving?", "Exit Game", JOptionPane.YES_NO_OPTION)) {
-                    JOptionPane.YES_OPTION -> model.saveToFile()
-                    JOptionPane.NO_OPTION -> println("without saving...")
-                }
-                display.window.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+                exitGame()
             }
         })
     }
@@ -138,6 +132,18 @@ class Game : Runnable {
             gameThread.join()
             exitProcess(0)
         }
+    }
+
+    /**
+     * exit Game process.
+     */
+    private fun exitGame() {
+        when (JOptionPane.showConfirmDialog(display.window, "Close with saving?", "Exit Game", JOptionPane.YES_NO_OPTION)) {
+            JOptionPane.YES_OPTION -> model.saveToFile()
+            JOptionPane.NO_OPTION -> println("without saving...")
+        }
+        shutDown()
+        display.window.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
     }
 
     /**

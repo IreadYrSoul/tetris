@@ -8,9 +8,10 @@ import org.junit.Assert.fail
 import config.Configuration.width as w
 import config.Configuration.height as h
 
+
 class ShapeTest {
 
-    val shape = Shape(T, RED, LEVEL_1)
+    private val shape = Shape(T, RED, LEVEL_1)
 
     @Test
     fun testLeft() {

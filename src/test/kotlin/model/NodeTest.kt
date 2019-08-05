@@ -10,8 +10,9 @@ import model.State.NOT_ACTIVE
 class NodeTest {
 
     lateinit var node:Node
-    val x = 5
-    val y = 5
+
+    private val x = 5
+    private val y = 5
 
     @Before
     fun setUp() {
