@@ -166,7 +166,7 @@ class Shape(var type: Type, var nodeColor: NodeColor, var level: Level) {
     /**
      * Moves Shape to down.
      */
-    fun down() {
+    @Synchronized fun down() {
         if (!isCollision && (active && maxY < h - 1)) {
             body.forEach { it.down() }
         } else {
